@@ -150,7 +150,7 @@ func initGenesis(ctx *cli.Context) error {
 		if err != nil {
 			utils.Fatalf("Failed to write genesis block: %v", err)
 		}
-		log.Info("Successfully wrote genesis state", "database", name, "hash", hash)
+		log.Info("Genesis state update finish.", "database", name, "hash", hash)
 	}
 	return nil
 }

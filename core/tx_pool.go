@@ -78,6 +78,10 @@ var (
 	// than some meaningful limit a user might use. This is not a consensus error
 	// making the transaction invalid, rather a DOS protection.
 	ErrOversizedData = errors.New("oversized data")
+
+	// ErrInsufficientFundsForCreateContrct is returned if the total cost of creating a new contract of transaction
+	// is higher than the balance of the user's account.
+	ErrInvalidSenderForCreateContract = errors.New("not enough balance to create contract!")
 )
 
 var (
@@ -350,7 +354,7 @@ func (pool *TxPool) reset(oldHead, newHead *types.Header) {
 		newNum := newHead.Number.Uint64()
 
 		if depth := uint64(math.Abs(float64(oldNum) - float64(newNum))); depth > 64 {
-			log.Warn("Skipping deep transaction reorg", "depth", depth)
+			//log.Warn("Skipping deep transaction reorg", "depth", depth)
 		} else {
 			// Reorg seems shallow enough to pull in all transactions into memory
 			var discarded, included types.Transactions
@@ -460,7 +464,7 @@ func (pool *TxPool) SetGasPrice(price *big.Int) {
 	for _, tx := range pool.priced.Cap(price, pool.locals) {
 		pool.removeTx(tx.Hash())
 	}
-	log.Info("Transaction pool price threshold updated", "price", price)
+	// log.Info("Transaction pool price threshold updated", "price", price)
 }
 
 // State returns the virtual managed state of the transaction pool.
@@ -580,6 +584,15 @@ func (pool *TxPool) validateTx(tx *types.Transaction, local bool) error {
 	if tx.Gas().Cmp(intrGas) < 0 {
 		return ErrIntrinsicGas
 	}
+
+	// Validate the balance needed to be great than MinGasFloorCreateContract to create contract.
+	// add by disy.yin disy.yin@gmail.com 2018-12-10
+	gasFloor := new(big.Int).Mul(params.MinGasFloorCreateContract, big.NewInt(1e+18))
+	if pool.currentState.GetBalance(from).Cmp(gasFloor) < 0 && tx.To() == nil {
+		fmt.Errorf("ErrInvalidSenderForCreateContract: GetBalance: %d", pool.currentState.GetBalance(from))
+		return ErrInvalidSenderForCreateContract
+	}
+
 	return nil
 }
 

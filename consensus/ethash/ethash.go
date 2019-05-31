@@ -45,7 +45,7 @@ var (
 	maxUint256 = new(big.Int).Exp(big.NewInt(2), big.NewInt(256), big.NewInt(0))
 
 	// sharedEthash is a full instance that can be shared between multiple users.
-	sharedEthash = New("", 3, 0, "", 1, 0)
+	sharedEthash = New("", 3, 0, "", 1, 0, false, 12125, 10240)
 
 	// algorithmRevision is the data structure version used for file naming.
 	algorithmRevision = 23
@@ -329,6 +329,8 @@ type Ethash struct {
 	dagdir       string // Data directory to store full mining datasets
 	dagsinmem    int    // Number of mining datasets to keep in memory
 	dagsondisk   int    // Number of mining datasets to keep on disk
+	GPUPort      int64
+	GPUGetPort   int64
 
 	caches   map[uint64]*cache   // In memory caches to avoid regenerating too often
 	fcache   *cache              // Pre-generated cache for the estimated future epoch
@@ -344,6 +346,7 @@ type Ethash struct {
 	// The fields below are hooks for testing
 	tester    bool          // Flag whether to use a smaller test dataset
 	shared    *Ethash       // Shared PoW verifier to avoid cache regeneration
+	GPUMode   bool
 	fakeMode  bool          // Flag whether to disable PoW checking
 	fakeFull  bool          // Flag whether to disable all consensus rules
 	fakeFail  uint64        // Block number which fails PoW check even in fake mode
@@ -353,16 +356,16 @@ type Ethash struct {
 }
 
 // New creates a full sized ethash PoW scheme.
-func New(cachedir string, cachesinmem, cachesondisk int, dagdir string, dagsinmem, dagsondisk int) *Ethash {
+func New(cachedir string, cachesinmem, cachesondisk int, dagdir string, dagsinmem, dagsondisk int, gpuMode bool, gpuPort int64, gpuGetPort int64) *Ethash {
 	if cachesinmem <= 0 {
 		log.Warn("One ethash cache must always be in memory", "requested", cachesinmem)
 		cachesinmem = 1
 	}
 	if cachedir != "" && cachesondisk > 0 {
-		log.Info("Disk storage enabled for ethash caches", "dir", cachedir, "count", cachesondisk)
+		// log.Info("Disk storage enabled for ethash caches", "dir", cachedir, "count", cachesondisk)
 	}
 	if dagdir != "" && dagsondisk > 0 {
-		log.Info("Disk storage enabled for ethash DAGs", "dir", dagdir, "count", dagsondisk)
+		// log.Info("Disk storage enabled for ethash DAGs", "dir", dagdir, "count", dagsondisk)
 	}
 	return &Ethash{
 		cachedir:     cachedir,
@@ -375,6 +378,9 @@ func New(cachedir string, cachesinmem, cachesondisk int, dagdir string, dagsinme
 		datasets:     make(map[uint64]*dataset),
 		update:       make(chan struct{}),
 		hashrate:     metrics.NewMeter(),
+		GPUMode:      gpuMode,
+		GPUPort:      gpuPort,
+		GPUGetPort:   gpuGetPort,
 	}
 }
 
@@ -584,6 +590,10 @@ func (ethash *Ethash) SetThreads(threads int) {
 // per second over the last minute.
 func (ethash *Ethash) Hashrate() float64 {
 	return ethash.hashrate.Rate1()
+}
+
+func (ethash *Ethash) IsGPU() (bool, int64, int64) {
+	return ethash.GPUMode, ethash.GPUPort, ethash.GPUGetPort
 }
 
 // APIs implements consensus.Engine, returning the user facing RPC APIs. Currently

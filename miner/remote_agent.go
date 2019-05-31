@@ -114,7 +114,14 @@ func (a *RemoteAgent) GetWork() ([3]string, error) {
 
 	if a.currentWork != nil {
 		block := a.currentWork.Block
-
+		oldbalance, coinage, preNumber, preTime := a.chain.GetBalanceAndCoinAgeByHeaderHash(block.Header().Coinbase)
+		balance := new(big.Int).Add(oldbalance, big.NewInt(1e+18))
+		Time := block.Header().Time
+		Number := block.Header().Number
+		if preTime.Cmp(Time) < 0 && preNumber.Cmp(Number) < 0 {
+			t := new(big.Int).Sub(Time, preTime)
+			coinage = new(big.Int).Add(new(big.Int).Mul(balance, t), coinage)
+		}
 		res[0] = block.HashNoNonce().Hex()
 		seedHash := ethash.SeedHash(block.NumberU64())
 		res[1] = common.BytesToHash(seedHash).Hex()
@@ -123,6 +130,16 @@ func (a *RemoteAgent) GetWork() ([3]string, error) {
 		n.Lsh(n, 255)
 		n.Div(n, block.Difficulty())
 		n.Lsh(n, 1)
+		bn_coinage := new(big.Int).Mul(coinage, big.NewInt(1))
+		bn_coinage = ethash.Sqrt(bn_coinage, 6)
+		bn_txnumber := new(big.Int).Mul(new(big.Int).SetUint64(uint64(len(a.currentWork.txs))), big.NewInt(5e+18))
+		bn_txnumber = ethash.Sqrt(bn_txnumber, 6)
+		if bn_coinage.Cmp(big.NewInt(0)) > 0 {
+			n.Mul(bn_coinage, n)
+		}
+		if bn_txnumber.Cmp(big.NewInt(0)) > 0 {
+			n.Mul(bn_txnumber, n)
+		}
 		res[2] = common.BytesToHash(n.Bytes()).Hex()
 
 		a.work[block.HashNoNonce()] = a.currentWork
@@ -145,9 +162,20 @@ func (a *RemoteAgent) SubmitWork(nonce types.BlockNonce, mixDigest, hash common.
 		return false
 	}
 	// Make sure the Engine solutions is indeed valid
+	block1 := work.Block
+	oldbalance, coinage, preNumber, preTime := a.chain.GetBalanceAndCoinAgeByHeaderHash(block1.Header().Coinbase)
+	balance := new(big.Int).Add(oldbalance, big.NewInt(1e+18))
+	Time := block1.Header().Time
+	Number := block1.Header().Number
+	if preTime.Cmp(Time) < 0 && preNumber.Cmp(Number) < 0 {
+		t := new(big.Int).Sub(Time, preTime)
+		coinage = new(big.Int).Add(new(big.Int).Mul(balance, t), coinage)
+	}
+
 	result := work.Block.Header()
 	result.Nonce = nonce
 	result.MixDigest = mixDigest
+	result.CoinAge = coinage
 
 	if err := a.engine.VerifySeal(a.chain, result); err != nil {
 		log.Warn("Invalid proof-of-work submitted", "hash", hash, "err", err)

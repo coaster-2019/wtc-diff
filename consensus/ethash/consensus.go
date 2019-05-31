@@ -273,10 +273,6 @@ func (ethash *Ethash) verifyHeader(chain consensus.ChainReader, header, parent *
 			return err
 		}
 	}
-	// If all checks passed, validate any special fields for hard forks
-	if err := misc.VerifyDAOHeaderExtraData(chain.Config(), header); err != nil {
-		return err
-	}
 	if err := misc.VerifyForkHashes(chain.Config(), header, uncle); err != nil {
 		return err
 	}
@@ -287,7 +283,7 @@ func (ethash *Ethash) verifyHeader(chain consensus.ChainReader, header, parent *
 // the difficulty that a new block should have when created at time
 // given the parent block's time and difficulty.
 // TODO (karalabe): Move the chain maker into this package and make this private!
-func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Header) *big.Int {
+/*func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Header) *big.Int {
 	next := new(big.Int).Add(parent.Number, big1)
 	switch {
 	case config.IsByzantium(next):
@@ -297,6 +293,11 @@ func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Heade
 	default:
 		return calcDifficultyFrontier(time, parent)
 	}
+}*/
+func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Header) *big.Int {
+	next := new(big.Int).Add(parent.Number, big1)
+	_ = config.IsByzantium(next)
+	return calcDifficultyEthereum(time,parent)
 }
 
 // Some weird constants to avoid constant memory allocs for them.
@@ -304,8 +305,12 @@ var (
 	expDiffPeriod = big.NewInt(100000)
 	big1          = big.NewInt(1)
 	big2          = big.NewInt(2)
+	big3          = big.NewInt(3)
+	big5          = big.NewInt(5)
+	big6          = big.NewInt(6)
 	big9          = big.NewInt(9)
 	big10         = big.NewInt(10)
+	big60         = big.NewInt(60)
 	bigMinus99    = big.NewInt(-99)
 	big2999999    = big.NewInt(2999999)
 )
@@ -366,6 +371,42 @@ func calcDifficultyByzantium(time uint64, parent *types.Header) *big.Int {
 		y.Exp(big2, y, nil)
 		x.Add(x, y)
 	}
+	return x
+}
+
+func calcDifficultyEthereum(time uint64, parent *types.Header) *big.Int {
+	// algorithm:
+	// diff = parent_diff +
+	//        (parent_diff / 2048 * max(6 - (block_timestamp - parent_timestamp) // 10, -99))
+	//        
+	//logger := log.New("epoch", epoch)
+	bigTime := new(big.Int).SetUint64(time)
+	bigParentTime := new(big.Int).Set(parent.Time)
+
+	// holds intermediate values to make the algo easier to read & audit
+	x := new(big.Int)
+	y := new(big.Int)
+
+	
+   
+	// 6 - (block_timestamp - parent_timestamp) // 10
+	x.Sub(bigTime, bigParentTime)
+	x.Div(x, big10)
+	x.Sub(big3, x)
+	// max(6 - (block_timestamp - parent_timestamp) // 10, -99)
+	if x.Cmp(bigMinus99) < 0 {
+		x.Set(bigMinus99)
+	}
+	// (parent_diff + parent_diff // 2048 * max(6 - (block_timestamp - parent_timestamp) // 10, -99))
+	y.Div(parent.Difficulty, params.DifficultyBoundDivisor)
+	x.Mul(y, x)
+	x.Add(parent.Difficulty, x)
+
+	// minimum difficulty can ever be (before exponential factor)
+	if x.Cmp(params.MinimumDifficulty) < 0 {
+		x.Set(params.MinimumDifficulty)
+	}
+
 	return x
 }
 
@@ -454,6 +495,8 @@ func calcDifficultyFrontier(time uint64, parent *types.Header) *big.Int {
 // VerifySeal implements consensus.Engine, checking whether the given block satisfies
 // the PoW difficulty requirements.
 func (ethash *Ethash) VerifySeal(chain consensus.ChainReader, header *types.Header) error {
+	hash := header.HashNoNonce().Bytes()
+
 	// If we're running a fake PoW, accept any seal as valid
 	if ethash.fakeMode {
 		time.Sleep(ethash.fakeDelay)
@@ -477,18 +520,34 @@ func (ethash *Ethash) VerifySeal(chain consensus.ChainReader, header *types.Head
 		return errInvalidDifficulty
 	}
 	// Recompute the digest and PoW value and verify against the header
-	cache := ethash.cache(number)
+	/*cache := ethash.cache(number)
 
 	size := datasetSize(number)
 	if ethash.tester {
 		size = 32 * 1024
-	}
-	digest, result := hashimotoLight(size, cache, header.HashNoNonce().Bytes(), header.Nonce.Uint64())
+	}*/
+	//digest, result := hashimotoLight(size, cache, header.HashNoNonce().Bytes(), header.Nonce.Uint64())
+	//-----------------------------------------------
+	coinage := header.CoinAge
+	order := getX11Order(hash, 11)
+	digest, result := myx11(header.HashNoNonce().Bytes(), header.Nonce.Uint64(), order)
 	if !bytes.Equal(header.MixDigest[:], digest) {
 		return errInvalidMixDigest
 	}
 	target := new(big.Int).Div(maxUint256, header.Difficulty)
-	if new(big.Int).SetBytes(result).Cmp(target) > 0 {
+	//if new(big.Int).SetBytes(result).Cmp(target) > 0 {
+	bn_coinage := new(big.Int).Mul(coinage, big.NewInt(1))
+	bn_coinage = Sqrt(bn_coinage, 6)
+	bn_txnumber := new(big.Int).Mul(new(big.Int).SetUint64(header.TxNumber), big.NewInt(5e+18))
+	bn_txnumber = Sqrt(bn_txnumber, 6)
+	if bn_coinage.Cmp(big.NewInt(0)) > 0 {
+		target.Mul(bn_coinage, target)
+	}
+	if bn_txnumber.Cmp(big.NewInt(0)) > 0 {
+		target.Mul(bn_txnumber, target)
+	}
+
+	if Compare(result, FullTo32(target.Bytes()), 32) > 0 {
 		return errInvalidPoW
 	}
 	return nil
@@ -510,7 +569,7 @@ func (ethash *Ethash) Prepare(chain consensus.ChainReader, header *types.Header)
 // setting the final state and assembling the block.
 func (ethash *Ethash) Finalize(chain consensus.ChainReader, header *types.Header, state *state.StateDB, txs []*types.Transaction, uncles []*types.Header, receipts []*types.Receipt) (*types.Block, error) {
 	// Accumulate any block and uncle rewards and commit the final state root
-	AccumulateRewards(chain.Config(), state, header, uncles)
+	AccumulateRewards(state, header, uncles)
 	header.Root = state.IntermediateRoot(chain.Config().IsEIP158(header.Number))
 
 	// Header seems complete, assemble into a block and return
@@ -527,24 +586,46 @@ var (
 // reward. The total reward consists of the static block reward and rewards for
 // included uncles. The coinbase of each uncle block is also rewarded.
 // TODO (karalabe): Move the chain maker into this package and make this private!
-func AccumulateRewards(config *params.ChainConfig, state *state.StateDB, header *types.Header, uncles []*types.Header) {
-	// Select the correct block reward based on chain progression
-	blockReward := frontierBlockReward
-	if config.IsByzantium(header.Number) {
-		blockReward = byzantiumBlockReward
-	}
-	// Accumulate the rewards for the miner and any included uncles
-	reward := new(big.Int).Set(blockReward)
-	r := new(big.Int)
-	for _, uncle := range uncles {
-		r.Add(uncle.Number, big8)
-		r.Sub(r, header.Number)
-		r.Mul(r, blockReward)
-		r.Div(r, big8)
-		state.AddBalance(uncle.Coinbase, r)
+func AccumulateRewards(state *state.StateDB, header *types.Header, uncles []*types.Header) {
+	balance := state.GetBalance(header.Coinbase)
+	reward := getReward(header.Number, balance)
 
-		r.Div(blockReward, big32)
-		reward.Add(reward, r)
+	state.AddBalance(header.Coinbase, reward, header.Number, header.Time)
+	state.SetCoinAge(header.Coinbase, big.NewInt(0))
+}
+
+func getReward(block, balance *big.Int) *big.Int {
+	oneyear := big.NewInt(2 * 60 * 24 * 365)
+	var reward *big.Int
+	big5000 := new(big.Int).Mul(params.AddedRewardForMN, big.NewInt(1e+18))
+	years := new(big.Int).Div(block, oneyear).Int64()
+
+	if block.Int64() <= 40000 {
+		reward = big.NewInt(1e+17)
+	}else if block.Int64() > 40000 && block.Int64() <= 100000{
+		reward = big.NewInt(1e+18)
+	}else if block.Int64() > 100000 && block.Int64() <= 200000{
+		reward = big.NewInt(2e+18)
+	}else if years < 2 {
+		reward = big.NewInt(25e+17)
+		if balance.Cmp(big5000) >= 0 {
+			reward = reward.Add(reward, big.NewInt(5e+17))
+		}
+	} else {
+		var discount float64 = 100000
+		y := years / 2
+		for i := 0; int64(i) < y; i++ {
+			discount = discount * 0.75
+		}
+
+		reward = big.NewInt(25e+17)
+		if balance.Cmp(big5000) >= 0 {
+			reward = reward.Add(reward, big.NewInt(5e+17))
+		}
+
+		reward = new(big.Int).Div(reward, big.NewInt(100000))
+		reward = new(big.Int).Mul(reward, big.NewInt(int64(discount)))
 	}
-	state.AddBalance(header.Coinbase, reward)
+	
+	return reward
 }

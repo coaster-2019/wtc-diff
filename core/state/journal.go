@@ -40,12 +40,24 @@ type (
 		account     *common.Address
 		prev        bool // whether account had already suicided
 		prevbalance *big.Int
+		prevcoinage *big.Int
+		//prevfublocknum *big.Int
+		prevfublocktime *big.Int
 	}
 
 	// Changes to individual accounts.
 	balanceChange struct {
 		account *common.Address
 		prev    *big.Int
+	}
+	coinageChange struct {
+		account *common.Address
+		prev    *big.Int
+	}
+	fublockChange struct {
+		account *common.Address
+		//prevnum *big.Int
+		prevtime *big.Int
 	}
 	nonceChange struct {
 		account *common.Address
@@ -91,6 +103,8 @@ func (ch suicideChange) undo(s *StateDB) {
 	if obj != nil {
 		obj.suicided = ch.prev
 		obj.setBalance(ch.prevbalance)
+		obj.setCoinAge(ch.prevcoinage)
+		obj.setFUBlock(ch.prevfublocktime)
 	}
 }
 
@@ -107,6 +121,14 @@ func (ch touchChange) undo(s *StateDB) {
 
 func (ch balanceChange) undo(s *StateDB) {
 	s.getStateObject(*ch.account).setBalance(ch.prev)
+}
+
+func (ch coinageChange) undo(s *StateDB) {
+	s.getStateObject(*ch.account).setCoinAge(ch.prev)
+}
+
+func (ch fublockChange) undo(s *StateDB) {
+	s.getStateObject(*ch.account).setFUBlock(ch.prevtime)
 }
 
 func (ch nonceChange) undo(s *StateDB) {

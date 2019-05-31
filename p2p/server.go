@@ -359,7 +359,7 @@ func (srv *Server) Start() (err error) {
 		return errors.New("server already running")
 	}
 	srv.running = true
-	log.Info("Starting P2P networking")
+	log.Info("P2P network up ...")
 
 	// static fields
 	if srv.PrivateKey == nil {

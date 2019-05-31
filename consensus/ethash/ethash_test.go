@@ -28,7 +28,7 @@ func TestTestMode(t *testing.T) {
 	head := &types.Header{Number: big.NewInt(1), Difficulty: big.NewInt(100)}
 
 	ethash := NewTester()
-	block, err := ethash.Seal(nil, types.NewBlockWithHeader(head), nil)
+	block, err := ethash.SealbyCPU(nil, types.NewBlockWithHeader(head), nil, nil)
 	if err != nil {
 		t.Fatalf("failed to seal block: %v", err)
 	}

@@ -108,6 +108,9 @@ var (
 		utils.EthStatsURLFlag,
 		utils.MetricsEnabledFlag,
 		utils.FakePoWFlag,
+		utils.GPUPowFlag,
+		utils.GPUPortFlag,
+		utils.GPUGetFlag,
 		utils.NoCompactionFlag,
 		utils.GpoBlocksFlag,
 		utils.GpoPercentileFlag,
@@ -140,7 +143,7 @@ func init() {
 	// Initialize the CLI app and start Geth
 	app.Action = geth
 	app.HideVersion = true // we have a command to print the version
-	app.Copyright = "Copyright 2013-2017 The go-ethereum Authors"
+	app.Copyright = "Copyright 2018-2019 The walton Authors"
 	app.Commands = []cli.Command{
 		// See chaincmd.go:
 		initCommand,

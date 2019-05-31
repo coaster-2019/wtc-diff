@@ -27,4 +27,6 @@ var (
 	Big32  = big.NewInt(32)
 	Big256 = big.NewInt(0xff)
 	Big257 = big.NewInt(257)
+	Big60  = big.NewInt(60)
+	Big24  = big.NewInt(24)
 )

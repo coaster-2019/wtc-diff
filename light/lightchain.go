@@ -142,9 +142,9 @@ func (self *LightChain) loadLastState() error {
 	}
 
 	// Issue a status log and return
-	header := self.hc.CurrentHeader()
-	headerTd := self.GetTd(header.Hash(), header.Number.Uint64())
-	log.Info("Loaded most recent local header", "number", header.Number, "hash", header.Hash(), "td", headerTd)
+	// header := self.hc.CurrentHeader()
+	// headerTd := self.GetTd(header.Hash(), header.Number.Uint64())
+	// log.Info("Loaded most recent local header", "number", header.Number, "hash", header.Hash(), "td", headerTd)
 
 	return nil
 }
@@ -349,7 +349,12 @@ func (self *LightChain) postChainEvents(events []interface{}) {
 //
 // In the case of a light chain, InsertHeaderChain also creates and posts light
 // chain events when necessary.
-func (self *LightChain) InsertHeaderChain(chain []*types.Header, checkFreq int) (int, error) {
+func (self *LightChain) InsertHeaderChain(chainb types.Blocks) (int, error) {
+	chain := make([]*types.Header, len(chainb))	
+	for i,bl := range chainb {
+		chain[i] = bl.Header()
+	}
+	checkFreq := 1
 	start := time.Now()
 	if i, err := self.hc.ValidateHeaderChain(chain, checkFreq); err != nil {
 		return i, err

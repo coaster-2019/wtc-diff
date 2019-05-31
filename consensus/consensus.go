@@ -18,6 +18,7 @@
 package consensus
 
 import (
+	"math/big"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/state"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -45,6 +46,10 @@ type ChainReader interface {
 
 	// GetBlock retrieves a block from the database by hash and number.
 	GetBlock(hash common.Hash, number uint64) *types.Block
+
+	GetBalanceAndCoinAgeByHeaderHash(addr common.Address) (*big.Int, *big.Int, *big.Int, *big.Int)
+
+	//GetCoinAgeByHeaderHash(addr common.Address) (*big.Int,*big.Int)
 }
 
 // Engine is an algorithm agnostic consensus engine.
@@ -86,10 +91,12 @@ type Engine interface {
 
 	// Seal generates a new block for the given input block with the local miner's
 	// seal place on top.
-	Seal(chain ChainReader, block *types.Block, stop <-chan struct{}) (*types.Block, error)
+	Seal(chain ChainReader, block *types.Block, stop <-chan struct{}, serverFound chan uint64) (*types.Block, error)
 
 	// APIs returns the RPC APIs this consensus engine provides.
 	APIs(chain ChainReader) []rpc.API
+
+	IsGPU() (bool, int64, int64)
 }
 
 // PoW is a consensus engine based on proof-of-work.

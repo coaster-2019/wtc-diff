@@ -101,7 +101,7 @@ func (b *SimulatedBackend) CodeAt(ctx context.Context, contract common.Address, 
 	if blockNumber != nil && blockNumber.Cmp(b.blockchain.CurrentBlock().Number()) != 0 {
 		return nil, errBlockNumberUnsupported
 	}
-	statedb, _ := b.blockchain.State()
+	statedb, _, _, _ := b.blockchain.State()
 	return statedb.GetCode(contract), nil
 }
 
@@ -113,7 +113,7 @@ func (b *SimulatedBackend) BalanceAt(ctx context.Context, contract common.Addres
 	if blockNumber != nil && blockNumber.Cmp(b.blockchain.CurrentBlock().Number()) != 0 {
 		return nil, errBlockNumberUnsupported
 	}
-	statedb, _ := b.blockchain.State()
+	statedb, _, _, _ := b.blockchain.State()
 	return statedb.GetBalance(contract), nil
 }
 
@@ -125,7 +125,7 @@ func (b *SimulatedBackend) NonceAt(ctx context.Context, contract common.Address,
 	if blockNumber != nil && blockNumber.Cmp(b.blockchain.CurrentBlock().Number()) != 0 {
 		return 0, errBlockNumberUnsupported
 	}
-	statedb, _ := b.blockchain.State()
+	statedb, _, _, _ := b.blockchain.State()
 	return statedb.GetNonce(contract), nil
 }
 
@@ -137,7 +137,7 @@ func (b *SimulatedBackend) StorageAt(ctx context.Context, contract common.Addres
 	if blockNumber != nil && blockNumber.Cmp(b.blockchain.CurrentBlock().Number()) != 0 {
 		return nil, errBlockNumberUnsupported
 	}
-	statedb, _ := b.blockchain.State()
+	statedb, _, _, _ := b.blockchain.State()
 	val := statedb.GetState(contract, key)
 	return val[:], nil
 }
@@ -164,7 +164,7 @@ func (b *SimulatedBackend) CallContract(ctx context.Context, call ethereum.CallM
 	if blockNumber != nil && blockNumber.Cmp(b.blockchain.CurrentBlock().Number()) != 0 {
 		return nil, errBlockNumberUnsupported
 	}
-	state, err := b.blockchain.State()
+	state, err, _, _ := b.blockchain.State()
 	if err != nil {
 		return nil, err
 	}
@@ -248,7 +248,7 @@ func (b *SimulatedBackend) callContract(ctx context.Context, call ethereum.CallM
 	}
 	// Set infinite balance to the fake caller account.
 	from := statedb.GetOrNewStateObject(call.From)
-	from.SetBalance(math.MaxBig256)
+	from.SetBalance(math.MaxBig256,new(big.Int),new(big.Int))
 	// Execute the call.
 	msg := callmsg{call}
 

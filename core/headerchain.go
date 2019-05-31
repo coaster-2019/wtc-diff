@@ -27,6 +27,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/consensus"
+	"github.com/ethereum/go-ethereum/core/state"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/log"
@@ -54,6 +55,7 @@ type HeaderChain struct {
 	currentHeader     *types.Header // Current head of the header chain (may be above the block chain!)
 	currentHeaderHash common.Hash   // Hash of the current head of the header chain (prevent recomputing all the time)
 
+	stateCache   state.Database // State database to reuse between imports (contains state cache)
 	headerCache *lru.Cache // Cache for the most recent block headers
 	tdCache     *lru.Cache // Cache for the most recent block total difficulties
 	numberCache *lru.Cache // Cache for the most recent block numbers
@@ -82,6 +84,7 @@ func NewHeaderChain(chainDb ethdb.Database, config *params.ChainConfig, engine c
 	hc := &HeaderChain{
 		config:        config,
 		chainDb:       chainDb,
+		stateCache:    state.NewDatabase(chainDb),
 		headerCache:   headerCache,
 		tdCache:       tdCache,
 		numberCache:   numberCache,
@@ -451,4 +454,20 @@ func (hc *HeaderChain) Engine() consensus.Engine { return hc.engine }
 // a header chain does not have blocks available for retrieval.
 func (hc *HeaderChain) GetBlock(hash common.Hash, number uint64) *types.Block {
 	return nil
+}
+
+func (hc *HeaderChain) GetBalanceAndCoinAgeByHeaderHash(addr common.Address) (*big.Int, *big.Int, *big.Int, *big.Int) {
+
+	s,_,Number,Time :=hc.State()
+	return s.GetBalance(addr),s.GetCoinAge(addr,Number,Time),Number,Time
+
+}
+
+func (hc *HeaderChain) State() (*state.StateDB, error, *big.Int, *big.Int) {
+	s,e := hc.StateAt(hc.currentHeader.Root)
+	return s,e, hc.currentHeader.Number, hc.currentHeader.Time
+}
+
+func (hc *HeaderChain) StateAt(root common.Hash) (*state.StateDB, error) {
+	return state.New(root, hc.stateCache)
 }

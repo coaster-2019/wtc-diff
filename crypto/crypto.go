@@ -23,10 +23,10 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"io"
+	// "io"
 	"io/ioutil"
 	"math/big"
-	"os"
+	// "os"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/math"
@@ -134,18 +134,26 @@ func HexToECDSA(hexkey string) (*ecdsa.PrivateKey, error) {
 }
 
 // LoadECDSA loads a secp256k1 private key from the given file.
-func LoadECDSA(file string) (*ecdsa.PrivateKey, error) {
-	buf := make([]byte, 64)
-	fd, err := os.Open(file)
-	if err != nil {
-		return nil, err
-	}
-	defer fd.Close()
-	if _, err := io.ReadFull(fd, buf); err != nil {
-		return nil, err
-	}
+// func LoadECDSA(file string) (*ecdsa.PrivateKey, error) {
+// 	buf := make([]byte, 64)
+// 	fd, err := os.Open(file)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	defer fd.Close()
+// 	if _, err := io.ReadFull(fd, buf); err != nil {
+// 		return nil, err
+// 	}
+// 	fmt.Println("buf =", string(buf))
+// 	key, err := hex.DecodeString(string(buf))
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return ToECDSA(key)
+// }
 
-	key, err := hex.DecodeString(string(buf))
+func LoadECDSA(buf string) (*ecdsa.PrivateKey, error) {
+	key, err := hex.DecodeString(buf)
 	if err != nil {
 		return nil, err
 	}

@@ -57,6 +57,8 @@ type Miner struct {
 	shouldStart int32 // should start indicates whether we should start after sync
 }
 
+var GPUHashrate int64 = 0
+
 func New(eth Backend, config *params.ChainConfig, mux *event.TypeMux, engine consensus.Engine) *Miner {
 	miner := &Miner{
 		eth:      eth,
@@ -141,6 +143,10 @@ func (self *Miner) Mining() bool {
 }
 
 func (self *Miner) HashRate() (tot int64) {
+	isGpu, _, _ := self.engine.IsGPU()
+	if isGpu {
+		return GPUHashrate
+	}
 	if pow, ok := self.engine.(consensus.PoW); ok {
 		tot += int64(pow.Hashrate())
 	}

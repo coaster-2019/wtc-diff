@@ -27,6 +27,8 @@ import (
 
 type DumpAccount struct {
 	Balance  string            `json:"balance"`
+	CoinAge  string            `json:"coinage"`
+	FUBlockTime string         `json:"fublocktime"` 
 	Nonce    uint64            `json:"nonce"`
 	Root     string            `json:"root"`
 	CodeHash string            `json:"codeHash"`
@@ -56,6 +58,8 @@ func (self *StateDB) RawDump() Dump {
 		obj := newObject(nil, common.BytesToAddress(addr), data, nil)
 		account := DumpAccount{
 			Balance:  data.Balance.String(),
+			CoinAge:  data.CoinAge.String(),
+			FUBlockTime:  data.FUBlockTime.String(),
 			Nonce:    data.Nonce,
 			Root:     common.Bytes2Hex(data.Root[:]),
 			CodeHash: common.Bytes2Hex(data.CodeHash),

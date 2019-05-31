@@ -93,7 +93,7 @@ type stateObject struct {
 
 // empty returns whether the account is considered empty.
 func (s *stateObject) empty() bool {
-	return s.data.Nonce == 0 && s.data.Balance.Sign() == 0 && bytes.Equal(s.data.CodeHash, emptyCodeHash)
+	return s.data.Nonce == 0 && s.data.Balance.Sign() == 0 && s.data.CoinAge.Sign() == 0 && bytes.Equal(s.data.CodeHash, emptyCodeHash)
 }
 
 // Account is the Ethereum consensus representation of accounts.
@@ -101,6 +101,9 @@ func (s *stateObject) empty() bool {
 type Account struct {
 	Nonce    uint64
 	Balance  *big.Int
+	CoinAge  *big.Int 
+	//FUBlockNum  *big.Int
+	FUBlockTime *big.Int  //final update block,use for set coinage
 	Root     common.Hash // merkle root of the storage trie
 	CodeHash []byte
 }
@@ -109,6 +112,12 @@ type Account struct {
 func newObject(db *StateDB, address common.Address, data Account, onDirty func(addr common.Address)) *stateObject {
 	if data.Balance == nil {
 		data.Balance = new(big.Int)
+	}
+	if data.CoinAge == nil {
+		data.CoinAge = new(big.Int)
+	}
+	if data.FUBlockTime == nil {
+		data.FUBlockTime = new(big.Int)
 	}
 	if data.CodeHash == nil {
 		data.CodeHash = emptyCodeHash
@@ -252,7 +261,8 @@ func (self *stateObject) CommitTrie(db Database, dbw trie.DatabaseWriter) error 
 
 // AddBalance removes amount from c's balance.
 // It is used to add funds to the destination account of a transfer.
-func (c *stateObject) AddBalance(amount *big.Int) {
+func (c *stateObject) AddBalance(amount, Num, Time *big.Int) {
+	c.UpdateCoinAge(Num, Time)
 	// EIP158: We must check emptiness for the objects such that the account
 	// clearing (0,0,0 objects) can take effect.
 	if amount.Sign() == 0 {
@@ -262,28 +272,83 @@ func (c *stateObject) AddBalance(amount *big.Int) {
 
 		return
 	}
-	c.SetBalance(new(big.Int).Add(c.Balance(), amount))
+	c.SetBalance(new(big.Int).Add(c.Balance(), amount), Num, Time)
 }
 
 // SubBalance removes amount from c's balance.
 // It is used to remove funds from the origin account of a transfer.
-func (c *stateObject) SubBalance(amount *big.Int) {
+func (c *stateObject) SubBalance(amount, Num, Time *big.Int) {
+	c.UpdateCoinAge(Num, Time)
 	if amount.Sign() == 0 {
 		return
 	}
-	c.SetBalance(new(big.Int).Sub(c.Balance(), amount))
+	c.SetBalance(new(big.Int).Sub(c.Balance(), amount), Num, Time)
 }
 
-func (self *stateObject) SetBalance(amount *big.Int) {
+func (self *stateObject) SetBalance(amount, Num, Time *big.Int) {
 	self.db.journal = append(self.db.journal, balanceChange{
 		account: &self.address,
 		prev:    new(big.Int).Set(self.data.Balance),
 	})
+	//self.UpdateCoinAge(Num, Time)
 	self.setBalance(amount)
 }
 
 func (self *stateObject) setBalance(amount *big.Int) {
 	self.data.Balance = amount
+	if self.onDirty != nil {
+		self.onDirty(self.Address())
+		self.onDirty = nil
+	}
+}
+
+func (c *stateObject) AddCoinAge(amount *big.Int) {
+	if amount.Sign() == 0 {
+		if c.empty() {
+			c.touch()
+		}
+
+		return
+	}
+	c.SetCoinAge(new(big.Int).Add(c.CoinAge(), amount))
+}
+
+func (c *stateObject) SubCoinAge(amount *big.Int) {
+
+	if amount.Sign() == 0 {
+		return
+	}
+	c.SetCoinAge(new(big.Int).Sub(c.CoinAge(), amount))
+}
+
+func (self *stateObject) SetCoinAge(amount *big.Int) {
+	self.db.journal = append(self.db.journal, coinageChange{
+		account: &self.address,
+		prev:    new(big.Int).Set(self.data.CoinAge),
+	})
+	self.setCoinAge(amount)
+}
+
+func (self *stateObject) setCoinAge(amount *big.Int) {
+	self.data.CoinAge = amount
+	if self.onDirty != nil {
+		self.onDirty(self.Address())
+		self.onDirty = nil
+	}
+}
+
+func (self *stateObject) SetFUBlock(Time  *big.Int) {
+	self.db.journal = append(self.db.journal, fublockChange{
+		account: &self.address,
+		//prevnum:    self.data.FUBlockNum,
+		prevtime:   self.data.FUBlockTime,
+	})
+	self.setFUBlock(Time)
+}
+
+func (self *stateObject) setFUBlock(Time  *big.Int) {
+	//self.data.FUBlockNum = Num
+	self.data.FUBlockTime = Time
 	if self.onDirty != nil {
 		self.onDirty(self.Address())
 		self.onDirty = nil
@@ -376,6 +441,14 @@ func (self *stateObject) Balance() *big.Int {
 	return self.data.Balance
 }
 
+func (self *stateObject) FUBlock() (*big.Int) {
+	return self.data.FUBlockTime
+}
+
+func (self *stateObject) CoinAge() *big.Int {
+	return self.data.CoinAge
+}
+
 func (self *stateObject) Nonce() uint64 {
 	return self.data.Nonce
 }
@@ -385,4 +458,13 @@ func (self *stateObject) Nonce() uint64 {
 // interface. Interfaces are awesome.
 func (self *stateObject) Value() *big.Int {
 	panic("Value on stateObject should never be called")
+}
+
+func (self *stateObject) UpdateCoinAge(Num,Time *big.Int) {
+	fut := self.FUBlock()
+	if fut.Cmp(Time) < 0 {
+		t := new(big.Int).Sub(Time,fut)
+		self.AddCoinAge(new(big.Int).Mul(self.Balance(),t))
+		self.SetFUBlock(Time)
+	}
 }

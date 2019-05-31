@@ -75,7 +75,7 @@ type BlockChain interface {
 	GetHeaderByHash(hash common.Hash) *types.Header
 	CurrentHeader() *types.Header
 	GetTdByHash(hash common.Hash) *big.Int
-	InsertHeaderChain(chain []*types.Header, checkFreq int) (int, error)
+	InsertHeaderChain(chain types.Blocks) (int, error)
 	Rollback(chain []common.Hash)
 	Status() (td *big.Int, currentBlock common.Hash, genesisBlock common.Hash)
 	GetHeaderByNumber(number uint64) *types.Header

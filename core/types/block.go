@@ -75,6 +75,7 @@ type Header struct {
 	TxHash      common.Hash    `json:"transactionsRoot" gencodec:"required"`
 	ReceiptHash common.Hash    `json:"receiptsRoot"     gencodec:"required"`
 	Bloom       Bloom          `json:"logsBloom"        gencodec:"required"`
+	CoinAge     *big.Int       `json:"coinage"	    gencodec:"required"`
 	Difficulty  *big.Int       `json:"difficulty"       gencodec:"required"`
 	Number      *big.Int       `json:"number"           gencodec:"required"`
 	GasLimit    *big.Int       `json:"gasLimit"         gencodec:"required"`
@@ -83,6 +84,7 @@ type Header struct {
 	Extra       []byte         `json:"extraData"        gencodec:"required"`
 	MixDigest   common.Hash    `json:"mixHash"          gencodec:"required"`
 	Nonce       BlockNonce     `json:"nonce"            gencodec:"required"`
+	TxNumber	uint64     `json:"txnumber"         gencodec:"required"`
 }
 
 // field type overrides for gencodec
@@ -118,6 +120,7 @@ func (h *Header) HashNoNonce() common.Hash {
 		h.GasUsed,
 		h.Time,
 		h.Extra,
+		h.TxNumber,
 	})
 }
 
@@ -200,6 +203,7 @@ func NewBlock(header *Header, txs []*Transaction, uncles []*Header, receipts []*
 	} else {
 		b.header.TxHash = DeriveSha(Transactions(txs))
 		b.transactions = make(Transactions, len(txs))
+		b.header.TxNumber = uint64(len(txs))
 		copy(b.transactions, txs)
 	}
 

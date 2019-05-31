@@ -186,7 +186,7 @@ func (st *StateTransition) buyGas() error {
 	st.gas += mgas.Uint64()
 
 	st.initialGas.Set(mgas)
-	state.SubBalance(sender.Address(), mgval)
+	state.SubBalance(sender.Address(), mgval, st.evm.Context.BlockNumber, st.evm.Context.Time)
 	return nil
 }
 
@@ -255,7 +255,7 @@ func (st *StateTransition) TransitionDb() (ret []byte, requiredGas, usedGas *big
 	requiredGas = new(big.Int).Set(st.gasUsed())
 
 	st.refundGas()
-	st.state.AddBalance(st.evm.Coinbase, new(big.Int).Mul(st.gasUsed(), st.gasPrice))
+	st.state.AddBalance(st.evm.Coinbase, new(big.Int).Mul(st.gasUsed(), st.gasPrice), st.evm.Context.BlockNumber, st.evm.Context.Time)
 
 	return ret, requiredGas, st.gasUsed(), vmerr != nil, err
 }
@@ -265,14 +265,14 @@ func (st *StateTransition) refundGas() {
 	// exchanged at the original rate.
 	sender := st.from() // err already checked
 	remaining := new(big.Int).Mul(new(big.Int).SetUint64(st.gas), st.gasPrice)
-	st.state.AddBalance(sender.Address(), remaining)
+	st.state.AddBalance(sender.Address(), remaining, st.evm.Context.BlockNumber, st.evm.Context.Time)
 
 	// Apply refund counter, capped to half of the used gas.
 	uhalf := remaining.Div(st.gasUsed(), common.Big2)
 	refund := math.BigMin(uhalf, st.state.GetRefund())
 	st.gas += refund.Uint64()
 
-	st.state.AddBalance(sender.Address(), refund.Mul(refund, st.gasPrice))
+	st.state.AddBalance(sender.Address(), refund.Mul(refund, st.gasPrice), st.evm.Context.BlockNumber, st.evm.Context.Time)
 
 	// Also return remaining gas to the block gas counter so it is
 	// available for the next transaction.

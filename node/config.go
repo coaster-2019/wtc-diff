@@ -37,7 +37,7 @@ import (
 
 const (
 	datadirPrivateKey      = "nodekey"            // Path within the datadir to the node's private key
-	datadirDefaultKeyStore = "keystore"           // Path within the datadir to the keystore
+	datadirDefaultKeyStore = "keystores"           // Path within the datadir to the keystore
 	datadirStaticNodes     = "static-nodes.json"  // Path within the datadir to the static node list
 	datadirTrustedNodes    = "trusted-nodes.json" // Path within the datadir to the trusted node list
 	datadirNodeDatabase    = "nodes"              // Path within the datadir to store the node infos
@@ -217,7 +217,7 @@ func (c *Config) NodeName() string {
 	name := c.name()
 	// Backwards compatibility: previous versions used title-cased "Geth", keep that.
 	if name == "geth" || name == "geth-testnet" {
-		name = "Geth"
+		name = "geth"
 	}
 	if c.UserIdent != "" {
 		name += "/" + c.UserIdent
@@ -320,6 +320,11 @@ func (c *Config) NodeKey() *ecdsa.PrivateKey {
 
 // StaticNodes returns a list of node enode URLs configured as static nodes.
 func (c *Config) StaticNodes() []*discover.Node {
+	// if _, err := os.Stat(c.resolvePath(datadirStaticNodes)); err != nil {
+	// 	wireteString := "[\n\"enode://0252193d34fd40f39d26b48751e6974d6cb86c0a11265d23f029b22a97785397fd0945e0f40b9669d2f0eea32ca19259acd9c38bb5f1b390b9aef2397f2ee6bf@119.23.241.36:23154\",\n\"enode://1a5f9e0785c67f8009533769b0c9f79fc996538ef8dcc4223a4608d39f9de1a5227fc16598171d977c331968b44f9ac2c7943ede6620897c7c1254cf5aba7268@138.68.3.61:23154\",\n\"enode://de6ffa7d8357aa3ebcfa9310396a2a5b9cb03dfcd6a1d73f9c43e819b5b9b239dc1acb3b8d56ec80e322f5b80807aa798e2e5c304b17ce099d2fb2a3c3956b8b@165.227.58.95:20202\"]"
+	// 	var d1 = []byte(wireteString)
+	// 	ioutil.WriteFile(c.DataDir+"/"+datadirStaticNodes,d1,0666)
+	// }
 	return c.parsePersistentNodes(c.resolvePath(datadirStaticNodes))
 }
 

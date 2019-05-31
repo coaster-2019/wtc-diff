@@ -198,6 +198,18 @@ func (tx *Transaction) To() *common.Address {
 	}
 }
 
+// From returns the sender address of the transaction.
+// add by disy.yin disy.yin@gmail.com 2018-12-10
+func (tx *Transaction) From() (common.Address, error) {
+	var from common.Address
+	var err error
+	if tx.data.V != nil {
+		signer := deriveSigner(tx.data.V)
+		from, err = Sender(signer, tx);
+	}
+	return from, err
+}
+
 // Hash hashes the RLP encoding of tx.
 // It uniquely identifies the transaction.
 func (tx *Transaction) Hash() common.Hash {

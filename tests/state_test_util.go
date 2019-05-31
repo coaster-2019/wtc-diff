@@ -164,7 +164,7 @@ func makePreState(db ethdb.Database, accounts core.GenesisAlloc) *state.StateDB 
 	for addr, a := range accounts {
 		statedb.SetCode(addr, a.Code)
 		statedb.SetNonce(addr, a.Nonce)
-		statedb.SetBalance(addr, a.Balance)
+		statedb.SetBalance(addr, a.Balance,new(big.Int),new(big.Int))
 		for k, v := range a.Storage {
 			statedb.SetState(addr, k, v)
 		}

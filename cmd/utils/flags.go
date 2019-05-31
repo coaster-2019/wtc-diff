@@ -20,7 +20,6 @@ package utils
 import (
 	"crypto/ecdsa"
 	"fmt"
-	"io/ioutil"
 	"math/big"
 	"os"
 	"path/filepath"
@@ -326,6 +325,18 @@ var (
 		Name:  "fakepow",
 		Usage: "Disables proof-of-work verification",
 	}
+	GPUPowFlag = cli.BoolFlag{
+		Name:  "gpupow",
+		Usage: "GPU speedup",
+	}
+	GPUPortFlag = cli.Int64Flag{
+		Name:  "gpuport",
+		Usage: "Port for GPU send to miner",
+	}
+	GPUGetFlag = cli.Int64Flag{
+		Name:  "gpugetport",
+		Usage: "Port for miner send to GPU",
+	}
 	NoCompactionFlag = cli.BoolFlag{
 		Name:  "nocompaction",
 		Usage: "Disables db compaction after import",
@@ -410,7 +421,7 @@ var (
 	ListenPortFlag = cli.IntFlag{
 		Name:  "port",
 		Usage: "Network listening port",
-		Value: 30303,
+		Value: 10101,
 	}
 	BootnodesFlag = cli.StringFlag{
 		Name:  "bootnodes",
@@ -735,7 +746,7 @@ func setEtherbase(ctx *cli.Context, ks *keystore.KeyStore, cfg *eth.Config) {
 		if len(accounts) > 0 {
 			cfg.Etherbase = accounts[0].Address
 		} else {
-			log.Warn("No etherbase set and no accounts found as default")
+			// log.Warn("No etherbase set and no accounts found as default")
 		}
 	}
 }
@@ -743,18 +754,20 @@ func setEtherbase(ctx *cli.Context, ks *keystore.KeyStore, cfg *eth.Config) {
 // MakePasswordList reads password lines from the file specified by the global --password flag.
 func MakePasswordList(ctx *cli.Context) []string {
 	path := ctx.GlobalString(PasswordFileFlag.Name)
-	if path == "" {
-		return nil
-	}
-	text, err := ioutil.ReadFile(path)
-	if err != nil {
-		Fatalf("Failed to read password file: %v", err)
-	}
-	lines := strings.Split(string(text), "\n")
-	// Sanitise DOS line endings.
-	for i := range lines {
-		lines[i] = strings.TrimRight(lines[i], "\r")
-	}
+	// if path == "" {
+	// 	return nil
+	// }
+	// text, err := ioutil.ReadFile(path)
+	// if err != nil {
+	// 	Fatalf("Failed to read password file: %v", err)
+	// }
+	// lines := strings.Split(string(text), "\n")
+	// // Sanitise DOS line endings.
+	// for i := range lines {
+	// 	lines[i] = strings.TrimRight(lines[i], "\r")
+	// }
+	lines := make([]string, 0)
+	lines = append(lines, path)
 	return lines
 }
 
@@ -894,6 +907,15 @@ func setEthash(ctx *cli.Context, cfg *eth.Config) {
 	}
 	if ctx.GlobalIsSet(EthashDatasetsOnDiskFlag.Name) {
 		cfg.EthashDatasetsOnDisk = ctx.GlobalInt(EthashDatasetsOnDiskFlag.Name)
+	}
+	if ctx.GlobalIsSet(GPUPowFlag.Name) {
+		cfg.PowGPU = ctx.GlobalBool(GPUPowFlag.Name)
+	}
+	if ctx.GlobalIsSet(GPUPortFlag.Name) {
+		cfg.GPUPort = ctx.GlobalInt64(GPUPortFlag.Name)
+	}
+	if ctx.GlobalIsSet(GPUGetFlag.Name) {
+		cfg.GPUGetPort = ctx.GlobalInt64(GPUGetFlag.Name)
 	}
 }
 
@@ -1091,6 +1113,7 @@ func MakeChain(ctx *cli.Context, stack *node.Node) (chain *core.BlockChain, chai
 		engine = ethash.New(
 			stack.ResolvePath(eth.DefaultConfig.EthashCacheDir), eth.DefaultConfig.EthashCachesInMem, eth.DefaultConfig.EthashCachesOnDisk,
 			stack.ResolvePath(eth.DefaultConfig.EthashDatasetDir), eth.DefaultConfig.EthashDatasetsInMem, eth.DefaultConfig.EthashDatasetsOnDisk,
+			eth.DefaultConfig.PowGPU,eth.DefaultConfig.GPUPort,eth.DefaultConfig.GPUGetPort,
 		)
 	}
 	config, _, err := core.SetupGenesisBlock(chainDb, MakeGenesis(ctx))
