@@ -4,19 +4,19 @@
 package x11
 
 import (
-	"github.com/wtc/go-wtc/crypto/hash"
+	"github.com/ethereum/go-ethereum/crypto/hash"
 
-	"github.com/wtc/go-wtc/crypto/x11/blake"
-	"github.com/wtc/go-wtc/crypto/x11/bmw"
-	"github.com/wtc/go-wtc/crypto/x11/cubed"
-	"github.com/wtc/go-wtc/crypto/x11/echo"
-	"github.com/wtc/go-wtc/crypto/x11/groest"
-	"github.com/wtc/go-wtc/crypto/x11/jhash"
-	"github.com/wtc/go-wtc/crypto/x11/keccak"
-	"github.com/wtc/go-wtc/crypto/x11/luffa"
-	"github.com/wtc/go-wtc/crypto/x11/shavite"
-	"github.com/wtc/go-wtc/crypto/x11/simd"
-	"github.com/wtc/go-wtc/crypto/x11/skein"
+	"github.com/ethereum/go-ethereum/crypto/x11/blake"
+	"github.com/ethereum/go-ethereum/crypto/x11/bmw"
+	"github.com/ethereum/go-ethereum/crypto/x11/cubed"
+	"github.com/ethereum/go-ethereum/crypto/x11/echo"
+	"github.com/ethereum/go-ethereum/crypto/x11/groest"
+	"github.com/ethereum/go-ethereum/crypto/x11/jhash"
+	"github.com/ethereum/go-ethereum/crypto/x11/keccak"
+	"github.com/ethereum/go-ethereum/crypto/x11/luffa"
+	"github.com/ethereum/go-ethereum/crypto/x11/shavite"
+	"github.com/ethereum/go-ethereum/crypto/x11/simd"
+	"github.com/ethereum/go-ethereum/crypto/x11/skein"
 )
 
 ////////////////

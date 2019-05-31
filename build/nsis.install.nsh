@@ -3,9 +3,9 @@ InstallDir "$InstDir"
 OutFile "${OUTPUTFILE}" # set through command line arguments
 
 # Links for "Add/Remove Programs"
-!define HELPURL "https://github.com/wtc/go-wtc/issues"
-!define UPDATEURL "https://github.com/wtc/go-wtc/releases"
-!define ABOUTURL "https://github.com/wtc/go-wtc#wtc-go"
+!define HELPURL "https://github.com/ethereum/go-ethereum/issues"
+!define UPDATEURL "https://github.com/ethereum/go-ethereum/releases"
+!define ABOUTURL "https://github.com/ethereum/go-ethereum#wtc-go"
 !define /date NOW "%Y%m%d"
 
 PageEx license
@@ -33,7 +33,7 @@ Section "Gwtc" GETH_IDX
   SimpleFC::AdvAddRule "Gwtc outgoing peers (TCP:10101)" ""  6 2 1 2147483647 1 "$INSTDIR\gwtc.exe" "" "" "Wtc" "" 10101 "" ""
   SimpleFC::AdvAddRule "Gwtc UDP discovery (UDP:10101)" "" 17 2 1 2147483647 1 "$INSTDIR\gwtc.exe" "" "" "Wtc" "" 10101 "" ""
 
-  # Set default IPC endpoint (https://github.com/wtc/EIPs/issues/147)
+  # Set default IPC endpoint (https://github.com/ethereum/EIPs/issues/147)
   ${EnvVarUpdate} $0 "WTC_SOCKET" "R" "HKLM" "\\.\pipe\gwtc.ipc"
   ${EnvVarUpdate} $0 "WTC_SOCKET" "A" "HKLM" "\\.\pipe\gwtc.ipc"
 

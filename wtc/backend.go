@@ -1,12 +1,12 @@
 // Copyright 2014 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-wtc library is free software: you can redistribute it and/or modify
+// The go-ethereum library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-wtc library is distributed in the hope that it will be useful,
+// The go-ethereum library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -25,28 +25,28 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/wtc/go-wtc/accounts"
-	"github.com/wtc/go-wtc/common"
-	"github.com/wtc/go-wtc/common/hexutil"
-	"github.com/wtc/go-wtc/consensus"
-	"github.com/wtc/go-wtc/consensus/ethash"
-	"github.com/wtc/go-wtc/core"
-	"github.com/wtc/go-wtc/core/bloombits"
-	"github.com/wtc/go-wtc/core/types"
-	"github.com/wtc/go-wtc/core/vm"
-	"github.com/wtc/go-wtc/wtc/downloader"
-	"github.com/wtc/go-wtc/wtc/filters"
-	"github.com/wtc/go-wtc/wtc/gasprice"
-	"github.com/wtc/go-wtc/wtcdb"
-	"github.com/wtc/go-wtc/event"
-	"github.com/wtc/go-wtc/internal/ethapi"
-	"github.com/wtc/go-wtc/log"
-	"github.com/wtc/go-wtc/miner"
-	"github.com/wtc/go-wtc/node"
-	"github.com/wtc/go-wtc/p2p"
-	"github.com/wtc/go-wtc/params"
-	"github.com/wtc/go-wtc/rlp"
-	"github.com/wtc/go-wtc/rpc"
+	"github.com/ethereum/go-ethereum/accounts"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/consensus"
+	"github.com/ethereum/go-ethereum/consensus/ethash"
+	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/core/bloombits"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/core/vm"
+	"github.com/ethereum/go-ethereum/wtc/downloader"
+	"github.com/ethereum/go-ethereum/wtc/filters"
+	"github.com/ethereum/go-ethereum/wtc/gasprice"
+	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/event"
+	"github.com/ethereum/go-ethereum/internal/ethapi"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/miner"
+	"github.com/ethereum/go-ethereum/node"
+	"github.com/ethereum/go-ethereum/p2p"
+	"github.com/ethereum/go-ethereum/params"
+	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/ethereum/go-ethereum/rpc"
 )
 
 type LesServer interface {

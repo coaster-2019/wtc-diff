@@ -1,18 +1,18 @@
 // Copyright 2017 The go-ethereum Authors
-// This file is part of go-wtc.
+// This file is part of go-ethereum.
 //
-// go-wtc is free software: you can redistribute it and/or modify
+// go-ethereum is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// go-wtc is distributed in the hope that it will be useful,
+// go-ethereum is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with go-wtc. If not, see <http://www.gnu.org/licenses/>.
+// along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
 
 package main
 
@@ -24,7 +24,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/wtc/go-wtc/log"
+	"github.com/ethereum/go-ethereum/log"
 )
 
 // dashboardContent is the actual dashboard HTML content to serve up when users
@@ -82,9 +82,9 @@ var dashboardContent = `
 									{{if .FaucetPage}}<li><a onclick="load('//{{.FaucetPage}}')"><i class="fa fa-bath"></i> Crypto Faucet</a></li>{{end}}
 									<li id="connect"><a><i class="fa fa-plug"></i> Connect Yourself</a>
 										<ul id="connect_list" class="nav child_menu">
-											<li><a onclick="$('#connect').removeClass('active'); $('#connect_list').toggle(); load('#connect-go-wtc-gwtc')">Go Wtc: Gwtc</a></li>
-											<li><a onclick="$('#connect').removeClass('active'); $('#connect_list').toggle(); load('#connect-go-wtc-mist')">Go Wtc: Wallet & Mist</a></li>
-											<li><a onclick="$('#connect').removeClass('active'); $('#connect_list').toggle(); load('#connect-go-wtc-mobile')">Go Wtc: Android & iOS</a></li>
+											<li><a onclick="$('#connect').removeClass('active'); $('#connect_list').toggle(); load('#connect-go-ethereum-gwtc')">Go Wtc: Gwtc</a></li>
+											<li><a onclick="$('#connect').removeClass('active'); $('#connect_list').toggle(); load('#connect-go-ethereum-mist')">Go Wtc: Wallet & Mist</a></li>
+											<li><a onclick="$('#connect').removeClass('active'); $('#connect_list').toggle(); load('#connect-go-ethereum-mobile')">Go Wtc: Android & iOS</a></li>
 										</ul>
 									</li>
 									<li><a onclick="load('#about')"><i class="fa fa-heartbeat"></i> About Puppeth</a></li>
@@ -94,7 +94,7 @@ var dashboardContent = `
 					</div>
 				</div>
 				<div class="right_col" role="main" style="padding: 0">
-					<div id="connect-go-wtc-gwtc" hidden style="padding: 16px;">
+					<div id="connect-go-ethereum-gwtc" hidden style="padding: 16px;">
 						<div class="page-title">
 							<div class="title_left">
 								<h3>Connect Yourself &ndash; Go Wtc: Gwtc</h3>
@@ -183,7 +183,7 @@ var dashboardContent = `
 							</div>
 						</div>
 					</div>
-					<div id="connect-go-wtc-mist" hidden style="padding: 16px;">
+					<div id="connect-go-ethereum-mist" hidden style="padding: 16px;">
 						<div class="page-title">
 							<div class="title_left">
 								<h3>Connect Yourself &ndash; Go Wtc: Wallet &amp; Mist</h3>
@@ -199,7 +199,7 @@ var dashboardContent = `
 									</div>
 									<div class="x_content">
 										<p>The Wtc Wallet is an <a href="https://electron.atom.io/" target="about:blank">Electron</a> based desktop application to manage your Wtc accounts and funds. Beside the usual account life-cycle operations you would expect to perform, the wallet also provides a means to send transactions from your accounts and to interact with smart contracts deployed on the network.</p>
-										<p>Under the hood the wallet is backed by a go-wtc full node, meaning that a mid range machine is assumed. Similarly, synchronization is based on <strong>fast-sync</strong>, which will download all blockchain data from the network and make it available to the wallet. Light nodes cannot currently fully back the wallet, but it's a target actively pursued.</p>
+										<p>Under the hood the wallet is backed by a go-ethereum full node, meaning that a mid range machine is assumed. Similarly, synchronization is based on <strong>fast-sync</strong>, which will download all blockchain data from the network and make it available to the wallet. Light nodes cannot currently fully back the wallet, but it's a target actively pursued.</p>
 										<br/>
 										<p>To connect with the Wtc Wallet, you'll need to initialize your private network first via Gwtc as the wallet does not currently support calling Gwtc directly. To initialize your local chain, download <a href="/{{.GwtcGenesis}}"><code>{{.GwtcGenesis}}</code></a> and run:
 											<pre>gwtc --datadir=$HOME/.{{.Network}} init {{.GwtcGenesis}}</pre>
@@ -208,7 +208,7 @@ var dashboardContent = `
 											<pre>wtcwallet --rpc $HOME/.{{.Network}}/gwtc.ipc --node-networkid={{.NetworkID}} --node-datadir=$HOME/.{{.Network}}{{if .Ethstats}} --node-ethstats='{{.Ethstats}}'{{end}} --node-bootnodes={{.BootnodesFullFlat}}</pre>
 										<p>
 										<br/>
-										<p>You can download the Wtc Wallet from <a href="https://github.com/wtc/mist/releases" target="about:blank">https://github.com/wtc/mist/releases</a>.</p>
+										<p>You can download the Wtc Wallet from <a href="https://github.com/ethereum/mist/releases" target="about:blank">https://github.com/ethereum/mist/releases</a>.</p>
 									</div>
 								</div>
 							</div>
@@ -220,7 +220,7 @@ var dashboardContent = `
 									</div>
 									<div class="x_content">
 										<p>The Mist browser is an <a href="https://electron.atom.io/" target="about:blank">Electron</a> based desktop application to load and interact with Wtc enabled third party web DApps. Beside all the functionality provided by the Wtc Wallet, Mist is an extended web-browser where loaded pages have access to the Wtc network via a web3.js provider, and may also interact with users' own accounts (given proper authorization and confirmation of course).</p>
-										<p>Under the hood the browser is backed by a go-wtc full node, meaning that a mid range machine is assumed. Similarly, synchronization is based on <strong>fast-sync</strong>, which will download all blockchain data from the network and make it available to the wallet. Light nodes cannot currently fully back the wallet, but it's a target actively pursued.</p>
+										<p>Under the hood the browser is backed by a go-ethereum full node, meaning that a mid range machine is assumed. Similarly, synchronization is based on <strong>fast-sync</strong>, which will download all blockchain data from the network and make it available to the wallet. Light nodes cannot currently fully back the wallet, but it's a target actively pursued.</p>
 										<br/>
 										<p>To connect with the Mist browser, you'll need to initialize your private network first via Gwtc as Mist does not currently support calling Gwtc directly. To initialize your local chain, download <a href="/{{.GwtcGenesis}}"><code>{{.GwtcGenesis}}</code></a> and run:
 											<pre>gwtc --datadir=$HOME/.{{.Network}} init {{.GwtcGenesis}}</pre>
@@ -229,13 +229,13 @@ var dashboardContent = `
 											<pre>mist --rpc $HOME/.{{.Network}}/gwtc.ipc --node-networkid={{.NetworkID}} --node-datadir=$HOME/.{{.Network}}{{if .Ethstats}} --node-ethstats='{{.Ethstats}}'{{end}} --node-bootnodes={{.BootnodesFullFlat}}</pre>
 										<p>
 										<br/>
-										<p>You can download the Mist browser from <a href="https://github.com/wtc/mist/releases" target="about:blank">https://github.com/wtc/mist/releases</a>.</p>
+										<p>You can download the Mist browser from <a href="https://github.com/ethereum/mist/releases" target="about:blank">https://github.com/ethereum/mist/releases</a>.</p>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div id="connect-go-wtc-mobile" hidden style="padding: 16px;">
+					<div id="connect-go-ethereum-mobile" hidden style="padding: 16px;">
 						<div class="page-title">
 							<div class="title_left">
 								<h3>Connect Yourself &ndash; Go Wtc: Android &amp; iOS</h3>
@@ -250,10 +250,10 @@ var dashboardContent = `
 										<div class="clearfix"></div>
 									</div>
 									<div class="x_content">
-										<p>Starting with the 1.5 release of go-wtc, we've transitioned away from shipping only full blown Wtc clients and started focusing on releasing the code as reusable packages initially for Go projects, then later for Java based Android projects too. Mobile support is still evolving, hence is bound to change often and hard, but the Wtc network can nonetheless be accessed from Android too.</p>
-										<p>Under the hood the Android library is backed by a go-wtc light node, meaning that given a not-too-old Android device, you should be able to join the network without significant issues. Certain functionality is not yet available and rough edges are bound to appear here and there, please report issues if you find any.</p>
+										<p>Starting with the 1.5 release of go-ethereum, we've transitioned away from shipping only full blown Wtc clients and started focusing on releasing the code as reusable packages initially for Go projects, then later for Java based Android projects too. Mobile support is still evolving, hence is bound to change often and hard, but the Wtc network can nonetheless be accessed from Android too.</p>
+										<p>Under the hood the Android library is backed by a go-ethereum light node, meaning that given a not-too-old Android device, you should be able to join the network without significant issues. Certain functionality is not yet available and rough edges are bound to appear here and there, please report issues if you find any.</p>
 										<br/>
-										<p>The stable Android archives are distributed via Maven Central, and the develop snapshots via the Sonatype repositories. Before proceeding, please ensure you have a recent version configured in your Android project. You can find details in <a href="https://github.com/wtc/go-wtc/wiki/Mobile:-Introduction#android-archive" target="about:blank">Mobile: Introduction &ndash; Android archive</a>.
+										<p>The stable Android archives are distributed via Maven Central, and the develop snapshots via the Sonatype repositories. Before proceeding, please ensure you have a recent version configured in your Android project. You can find details in <a href="https://github.com/ethereum/go-ethereum/wiki/Mobile:-Introduction#android-archive" target="about:blank">Mobile: Introduction &ndash; Android archive</a>.
 										<p>Before connecting to the Wtc network, download the <a href="/{{.GwtcGenesis}}"><code>{{.GwtcGenesis}}</code></a> genesis json file and either store it in your Android project as a resource file you can access, or save it as a string in a variable. You're going to need to to initialize your client.</p>
 										<p>Inside your Java code you can now import the gwtc archive and connect to Wtc:
 											<pre>import org.wtc.gwtc.*;</pre>
@@ -281,10 +281,10 @@ node.start();
 										<div class="clearfix"></div>
 									</div>
 									<div class="x_content">
-										<p>Starting with the 1.5 release of go-wtc, we've transitioned away from shipping only full blown Wtc clients and started focusing on releasing the code as reusable packages initially for Go projects, then later for ObjC/Swift based iOS projects too. Mobile support is still evolving, hence is bound to change often and hard, but the Wtc network can nonetheless be accessed from iOS too.</p>
-										<p>Under the hood the iOS library is backed by a go-wtc light node, meaning that given a not-too-old Apple device, you should be able to join the network without significant issues. Certain functionality is not yet available and rough edges are bound to appear here and there, please report issues if you find any.</p>
+										<p>Starting with the 1.5 release of go-ethereum, we've transitioned away from shipping only full blown Wtc clients and started focusing on releasing the code as reusable packages initially for Go projects, then later for ObjC/Swift based iOS projects too. Mobile support is still evolving, hence is bound to change often and hard, but the Wtc network can nonetheless be accessed from iOS too.</p>
+										<p>Under the hood the iOS library is backed by a go-ethereum light node, meaning that given a not-too-old Apple device, you should be able to join the network without significant issues. Certain functionality is not yet available and rough edges are bound to appear here and there, please report issues if you find any.</p>
 										<br/>
-										<p>Both stable and develop builds of the iOS framework are available via CocoaPods. Before proceeding, please ensure you have a recent version configured in your iOS project. You can find details in <a href="https://github.com/wtc/go-wtc/wiki/Mobile:-Introduction#ios-framework" target="about:blank">Mobile: Introduction &ndash; iOS framework</a>.
+										<p>Both stable and develop builds of the iOS framework are available via CocoaPods. Before proceeding, please ensure you have a recent version configured in your iOS project. You can find details in <a href="https://github.com/ethereum/go-ethereum/wiki/Mobile:-Introduction#ios-framework" target="about:blank">Mobile: Introduction &ndash; iOS framework</a>.
 										<p>Before connecting to the Wtc network, download the <a href="/{{.GwtcGenesis}}"><code>{{.GwtcGenesis}}</code></a> genesis json file and either store it in your iOS project as a resource file you can access, or save it as a string in a variable. You're going to need to to initialize your client.</p>
 										<p>Inside your Swift code you can now import the gwtc framework and connect to Wtc (ObjC should be analogous):
 											<pre>import Gwtc</pre>
@@ -322,7 +322,7 @@ try! node?.start();
 										<p>Puppeth is a tool to aid you in creating a new Wtc network down to the genesis block, bootnodes, signers, ethstats server, crypto faucet, wallet browsers, block explorer, dashboard and more; without the hassle that it would normally entail to manually configure all these services one by one.</p>
 										<p>Puppeth uses ssh to dial in to remote servers, and builds its network components out of docker containers using docker-compose. The user is guided through the process via a command line wizard that does the heavy lifting and topology configuration automatically behind the scenes.</p>
 										<br/>
-										<p>Puppeth is distributed as part of the <a href="https://gwtc.wtc.org/downloads/" target="about:blank">Gwtc &amp; Tools</a> bundles, but can also be installed separately via:<pre>go get github.com/wtc/go-wtc/cmd/puppeth</pre></p>
+										<p>Puppeth is distributed as part of the <a href="https://gwtc.wtc.org/downloads/" target="about:blank">Gwtc &amp; Tools</a> bundles, but can also be installed separately via:<pre>go get github.com/ethereum/go-ethereum/cmd/puppeth</pre></p>
 										<br/>
 										<p><em>Copyright 2017. The go-ethereum Authors.</em></p>
 									</div>
@@ -345,9 +345,9 @@ try! node?.start();
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/gentelella/1.3.0/js/custom.min.js"></script>
 		<script>
 			var load = function(url) {
-				$("#connect-go-wtc-gwtc").fadeOut(300)
-				$("#connect-go-wtc-mist").fadeOut(300)
-				$("#connect-go-wtc-mobile").fadeOut(300)
+				$("#connect-go-ethereum-gwtc").fadeOut(300)
+				$("#connect-go-ethereum-mist").fadeOut(300)
+				$("#connect-go-ethereum-mobile").fadeOut(300)
 				$("#about").fadeOut(300)
 				$("#frame-wrapper").fadeOut(300);
 

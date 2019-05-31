@@ -2,12 +2,12 @@ Pod::Spec.new do |spec|
   spec.name         = 'Gwtc'
   spec.version      = '{{.Version}}'
   spec.license      = { :type => 'GNU Lesser General Public License, Version 3.0' }
-  spec.homepage     = 'https://github.com/wtc/go-wtc'
+  spec.homepage     = 'https://github.com/ethereum/go-ethereum'
   spec.authors      = { {{range .Contributors}}
 		'{{.Name}}' => '{{.Email}}',{{end}}
 	}
   spec.summary      = 'iOS Wtc Client'
-  spec.source       = { :git => 'https://github.com/wtc/go-wtc.git', :commit => '{{.Commit}}' }
+  spec.source       = { :git => 'https://github.com/ethereum/go-ethereum.git', :commit => '{{.Commit}}' }
 
 	spec.platform = :ios
   spec.ios.deployment_target  = '9.0'

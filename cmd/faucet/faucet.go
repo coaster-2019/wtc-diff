@@ -1,18 +1,18 @@
 // Copyright 2017 The go-ethereum Authors
-// This file is part of go-wtc.
+// This file is part of go-ethereum.
 //
-// go-wtc is free software: you can redistribute it and/or modify
+// go-ethereum is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// go-wtc is distributed in the hope that it will be useful,
+// go-ethereum is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with go-wtc. If not, see <http://www.gnu.org/licenses/>.
+// along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
 
 // faucet is a Ether faucet backed by a light client.
 package main
@@ -38,23 +38,23 @@ import (
 	"sync"
 	"time"
 
-	"github.com/wtc/go-wtc/accounts"
-	"github.com/wtc/go-wtc/accounts/keystore"
-	"github.com/wtc/go-wtc/common"
-	"github.com/wtc/go-wtc/core"
-	"github.com/wtc/go-wtc/core/types"
-	"github.com/wtc/go-wtc/wtc"
-	"github.com/wtc/go-wtc/wtc/downloader"
-	"github.com/wtc/go-wtc/wtcclient"
-	"github.com/wtc/go-wtc/wtcstats"
-	"github.com/wtc/go-wtc/les"
-	"github.com/wtc/go-wtc/log"
-	"github.com/wtc/go-wtc/node"
-	"github.com/wtc/go-wtc/p2p"
-	"github.com/wtc/go-wtc/p2p/discover"
-	"github.com/wtc/go-wtc/p2p/discv5"
-	"github.com/wtc/go-wtc/p2p/nat"
-	"github.com/wtc/go-wtc/params"
+	"github.com/ethereum/go-ethereum/accounts"
+	"github.com/ethereum/go-ethereum/accounts/keystore"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/wtc"
+	"github.com/ethereum/go-ethereum/wtc/downloader"
+	"github.com/ethereum/go-ethereum/wtcclient"
+	"github.com/ethereum/go-ethereum/wtcstats"
+	"github.com/ethereum/go-ethereum/les"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/node"
+	"github.com/ethereum/go-ethereum/p2p"
+	"github.com/ethereum/go-ethereum/p2p/discover"
+	"github.com/ethereum/go-ethereum/p2p/discv5"
+	"github.com/ethereum/go-ethereum/p2p/nat"
+	"github.com/ethereum/go-ethereum/params"
 	"golang.org/x/net/websocket"
 )
 

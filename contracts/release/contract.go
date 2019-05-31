@@ -7,10 +7,10 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/wtc/go-wtc/accounts/abi"
-	"github.com/wtc/go-wtc/accounts/abi/bind"
-	"github.com/wtc/go-wtc/common"
-	"github.com/wtc/go-wtc/core/types"
+	"github.com/ethereum/go-ethereum/accounts/abi"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 )
 
 // ReleaseOracleABI is the input ABI used to generate the binding from.

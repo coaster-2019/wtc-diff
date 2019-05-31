@@ -1,18 +1,18 @@
 // Copyright 2017 The go-ethereum Authors
-// This file is part of go-wtc.
+// This file is part of go-ethereum.
 //
-// go-wtc is free software: you can redistribute it and/or modify
+// go-ethereum is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// go-wtc is distributed in the hope that it will be useful,
+// go-ethereum is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with go-wtc. If not, see <http://www.gnu.org/licenses/>.
+// along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
 
 package main
 
@@ -27,16 +27,16 @@ import (
 
 	goruntime "runtime"
 
-	"github.com/wtc/go-wtc/cmd/evm/internal/compiler"
-	"github.com/wtc/go-wtc/cmd/utils"
-	"github.com/wtc/go-wtc/common"
-	"github.com/wtc/go-wtc/core"
-	"github.com/wtc/go-wtc/core/state"
-	"github.com/wtc/go-wtc/core/vm"
-	"github.com/wtc/go-wtc/core/vm/runtime"
-	"github.com/wtc/go-wtc/wtcdb"
-	"github.com/wtc/go-wtc/log"
-	"github.com/wtc/go-wtc/params"
+	"github.com/ethereum/go-ethereum/cmd/evm/internal/compiler"
+	"github.com/ethereum/go-ethereum/cmd/utils"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/core/state"
+	"github.com/ethereum/go-ethereum/core/vm"
+	"github.com/ethereum/go-ethereum/core/vm/runtime"
+	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/params"
 	cli "gopkg.in/urfave/cli.v1"
 )
 

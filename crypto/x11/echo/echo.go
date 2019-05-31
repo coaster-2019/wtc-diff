@@ -6,8 +6,8 @@ package echo
 import (
 	"fmt"
 
-	"github.com/wtc/go-wtc/crypto/hash"
-	"github.com/wtc/go-wtc/crypto/x11/aesr"
+	"github.com/ethereum/go-ethereum/crypto/hash"
+	"github.com/ethereum/go-ethereum/crypto/x11/aesr"
 )
 
 // HashSize holds the size of a hash in bytes.

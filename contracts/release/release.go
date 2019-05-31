@@ -1,12 +1,12 @@
 // Copyright 2015 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-wtc library is free software: you can redistribute it and/or modify
+// The go-ethereum library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-wtc library is distributed in the hope that it will be useful,
+// The go-ethereum library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -25,15 +25,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/wtc/go-wtc/accounts/abi/bind"
-	"github.com/wtc/go-wtc/common"
-	"github.com/wtc/go-wtc/wtc"
-	"github.com/wtc/go-wtc/internal/ethapi"
-	"github.com/wtc/go-wtc/les"
-	"github.com/wtc/go-wtc/log"
-	"github.com/wtc/go-wtc/node"
-	"github.com/wtc/go-wtc/p2p"
-	"github.com/wtc/go-wtc/rpc"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/wtc"
+	"github.com/ethereum/go-ethereum/internal/ethapi"
+	"github.com/ethereum/go-ethereum/les"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/node"
+	"github.com/ethereum/go-ethereum/p2p"
+	"github.com/ethereum/go-ethereum/rpc"
 )
 
 // Interval to check for new releases
@@ -149,7 +149,7 @@ func (r *ReleaseService) checkVersion() {
 
 		warning := fmt.Sprintf("Client v%d.%d.%d-%x seems older than the latest upstream release v%d.%d.%d-%x",
 			r.config.Major, r.config.Minor, r.config.Patch, r.config.Commit[:4], version.Major, version.Minor, version.Patch, version.Commit[:4])
-		howtofix := fmt.Sprintf("Please check https://github.com/wtc/go-wtc/releases for new releases")
+		howtofix := fmt.Sprintf("Please check https://github.com/ethereum/go-ethereum/releases for new releases")
 		separator := strings.Repeat("-", len(warning))
 
 		log.Warn(separator)

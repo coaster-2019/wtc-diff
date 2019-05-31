@@ -1,12 +1,12 @@
 // Copyright 2016 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-wtc library is free software: you can redistribute it and/or modify
+// The go-ethereum library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-wtc library is distributed in the hope that it will be useful,
+// The go-ethereum library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -23,16 +23,16 @@ import (
 	"testing"
 	"time"
 
-	"github.com/wtc/go-wtc/common"
-	"github.com/wtc/go-wtc/common/math"
-	"github.com/wtc/go-wtc/core"
-	"github.com/wtc/go-wtc/core/state"
-	"github.com/wtc/go-wtc/core/types"
-	"github.com/wtc/go-wtc/core/vm"
-	"github.com/wtc/go-wtc/wtcdb"
-	"github.com/wtc/go-wtc/light"
-	"github.com/wtc/go-wtc/params"
-	"github.com/wtc/go-wtc/rlp"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/math"
+	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/core/state"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/core/vm"
+	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/light"
+	"github.com/ethereum/go-ethereum/params"
+	"github.com/ethereum/go-ethereum/rlp"
 )
 
 type odrTestFn func(ctx context.Context, db wtcdb.Database, config *params.ChainConfig, bc *core.BlockChain, lc *light.LightChain, bhash common.Hash) []byte

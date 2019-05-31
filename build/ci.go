@@ -1,12 +1,12 @@
 // Copyright 2016 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-wtc library is free software: you can redistribute it and/or modify
+// The go-ethereum library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-wtc library is distributed in the hope that it will be useful,
+// The go-ethereum library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -58,7 +58,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/wtc/go-wtc/internal/build"
+	"github.com/ethereum/go-ethereum/internal/build"
 )
 
 var (
@@ -192,7 +192,7 @@ func doInstall(cmdline []string) {
 		}
 		if minorGoVersion < 7 && !strings.Contains(runtime.Version(), "devel") {
 			log.Println("You have Go version", runtime.Version())
-			log.Println("go-wtc requires at least Go version 1.7 and cannot")
+			log.Println("go-ethereum requires at least Go version 1.7 and cannot")
 			log.Println("be compiled with an earlier version. Please upgrade your Go installation.")
 			os.Exit(1)
 		}
@@ -531,7 +531,7 @@ func isUnstableBuild(env build.Environment) bool {
 type debMetadata struct {
 	Env build.Environment
 
-	// go-wtc version being built. Note that this
+	// go-ethereum version being built. Note that this
 	// is not the debian package version. The package version
 	// is constructed by VersionString.
 	Version string
@@ -736,7 +736,7 @@ func doAndroidArchive(cmdline []string) {
 	// Build the Android archive and Maven resources
 	build.MustRun(goTool("get", "golang.org/x/mobile/cmd/gomobile"))
 	build.MustRun(gomobileTool("init", "--ndk", os.Getenv("ANDROID_NDK")))
-	build.MustRun(gomobileTool("bind", "--target", "android", "--javapkg", "org.wtc", "-v", "github.com/wtc/go-wtc/mobile"))
+	build.MustRun(gomobileTool("bind", "--target", "android", "--javapkg", "org.wtc", "-v", "github.com/ethereum/go-ethereum/mobile"))
 
 	if *local {
 		// If we're building locally, copy bundle to build dir and skip Maven
@@ -856,7 +856,7 @@ func doXCodeFramework(cmdline []string) {
 	// Build the iOS XCode framework
 	build.MustRun(goTool("get", "golang.org/x/mobile/cmd/gomobile"))
 	build.MustRun(gomobileTool("init"))
-	bind := gomobileTool("bind", "--target", "ios", "--tags", "ios", "-v", "github.com/wtc/go-wtc/mobile")
+	bind := gomobileTool("bind", "--target", "ios", "--tags", "ios", "-v", "github.com/ethereum/go-ethereum/mobile")
 
 	if *local {
 		// If we're building locally, use the build folder and stop afterwards

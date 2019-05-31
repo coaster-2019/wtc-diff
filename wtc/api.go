@@ -1,12 +1,12 @@
 // Copyright 2015 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-wtc library is free software: you can redistribute it and/or modify
+// The go-ethereum library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-wtc library is distributed in the hope that it will be useful,
+// The go-ethereum library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -28,19 +28,19 @@ import (
 	"strings"
 	"time"
 
-	"github.com/wtc/go-wtc/common"
-	"github.com/wtc/go-wtc/common/hexutil"
-	"github.com/wtc/go-wtc/core"
-	"github.com/wtc/go-wtc/core/state"
-	"github.com/wtc/go-wtc/core/types"
-	"github.com/wtc/go-wtc/core/vm"
-	"github.com/wtc/go-wtc/internal/ethapi"
-	"github.com/wtc/go-wtc/log"
-	"github.com/wtc/go-wtc/miner"
-	"github.com/wtc/go-wtc/params"
-	"github.com/wtc/go-wtc/rlp"
-	"github.com/wtc/go-wtc/rpc"
-	"github.com/wtc/go-wtc/trie"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/core/state"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/core/vm"
+	"github.com/ethereum/go-ethereum/internal/ethapi"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/miner"
+	"github.com/ethereum/go-ethereum/params"
+	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/ethereum/go-ethereum/trie"
 )
 
 const defaultTraceTimeout = 5 * time.Second

@@ -21,7 +21,7 @@ Section "Uninstall"
   SimpleFC::AdvRemoveRule "Gwtc outgoing peers (TCP:10101)"
   SimpleFC::AdvRemoveRule "Gwtc UDP discovery (UDP:10101)"
 
-  # Remove IPC endpoint (https://github.com/wtc/EIPs/issues/147)
+  # Remove IPC endpoint (https://github.com/ethereum/EIPs/issues/147)
   ${un.EnvVarUpdate} $0 "WTC_SOCKET" "R" "HKLM" "\\.\pipe\gwtc.ipc"
 
   # Remove install directory from PATH

@@ -1,12 +1,12 @@
 // Copyright 2015 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-wtc library is free software: you can redistribute it and/or modify
+// The go-ethereum library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-wtc library is distributed in the hope that it will be useful,
+// The go-ethereum library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -25,7 +25,7 @@ int   evmjit_run(void* _jit, void* _data, void* _env);
 void  evmjit_destroy(void* _jit);
 
 // Shared library evmjit (e.g. libevmjit.so) is expected to be installed in /usr/local/lib
-// More: https://github.com/wtc/evmjit
+// More: https://github.com/ethereum/evmjit
 #cgo LDFLAGS: -levmjit
 */
 import "C"
@@ -38,9 +38,9 @@ import (
 	"math/big"
 	"unsafe"
 
-	"github.com/wtc/go-wtc/core/state"
-	"github.com/wtc/go-wtc/crypto"
-	"github.com/wtc/go-wtc/params"
+	"github.com/ethereum/go-ethereum/core/state"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/params"
 )
 
 type JitVm struct {
