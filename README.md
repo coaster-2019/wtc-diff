@@ -14,17 +14,17 @@ Install latest distribution of [Go](https://golang.org "Go") if you don't have i
 `# cd /usr/local/src`  
 `# git clone https://github.com/WaltonChain/WaltonChain_Gwtc_Src.git`  
 `# cd WaltonChain_Gwtc_Src`  
-`# make gwtc`  
-`# ./build/bin/gwtc version`  
+`# make geth`  
+`# ./build/bin/geth version`  
 
 ### 3. Deploy
-`# cd /usr/local/src/WaltonChain_Gwtc_Src/gwtc_bin/`  
-`# cp ../build/bin/gwtc ./bin/gwtc`  
+`# cd /usr/local/src/WaltonChain_Gwtc_Src/geth_bin/`  
+`# cp ../build/bin/geth ./bin/geth`  
 `# ./backend.sh`
 
 ### 4. Enter console
-`# cd /usr/local/src/WaltonChain_Gwtc_Src/gwtc_bin/`  
-`# ./bin/gwtc attach ./data/gwtc.ipc`
+`# cd /usr/local/src/WaltonChain_Gwtc_Src/geth_bin/`  
+`# ./bin/geth attach ./data/geth.ipc`
 
 ### 5. View information of the connected node
 `# admin.peers`
@@ -50,11 +50,11 @@ Install latest distribution of [Go](https://golang.org "Go") if you don't have i
 `# exit`
 
 ### 12. View log
-`# cd /usr/local/src/WaltonChain_Gwtc_Src/gwtc_bin/`  
-`# tail -f gwtc.log`
+`# cd /usr/local/src/WaltonChain_Gwtc_Src/geth_bin/`  
+`# tail -f geth.log`
 
-### 13. Stop gwtc
-`# cd /usr/local/src/WaltonChain_Gwtc_Src/gwtc_bin/`  
+### 13. Stop geth
+`# cd /usr/local/src/WaltonChain_Gwtc_Src/geth_bin/`  
 `# ./stop.sh` 
 
 

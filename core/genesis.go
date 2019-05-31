@@ -342,7 +342,7 @@ func DefaultRinkebyGenesisBlock() *Genesis {
 	}
 }
 
-// DevGenesisBlock returns the 'gwtc --dev' genesis block.
+// DevGenesisBlock returns the 'geth --dev' genesis block.
 func DevGenesisBlock() *Genesis {
 	return &Genesis{
 		Config:     params.AllProtocolChanges,

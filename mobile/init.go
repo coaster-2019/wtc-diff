@@ -16,7 +16,7 @@
 
 // Contains initialization code for the mbile library.
 
-package gwtc
+package geth
 
 import (
 	"os"

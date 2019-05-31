@@ -274,8 +274,8 @@ const tmplSourceJava = `
 
 package {{.Package}};
 
-import org.wtc.gwtc.*;
-import org.wtc.gwtc.internal.*;
+import org.wtc.geth.*;
+import org.wtc.geth.internal.*;
 
 {{range $contract := .Contracts}}
 	public class {{.Type}} {

@@ -100,11 +100,11 @@ func TestCustomGenesis(t *testing.T) {
 		runGwtc(t, "--datadir", datadir, "init", json).WaitExit()
 
 		// Query the custom genesis block
-		gwtc := runGwtc(t,
+		geth := runGwtc(t,
 			"--datadir", datadir, "--maxpeers", "0", "--port", "0",
 			"--nodiscover", "--nat", "none", "--ipcdisable",
 			"--exec", tt.query, "console")
-		gwtc.ExpectRegexp(tt.result)
-		gwtc.ExpectExit()
+		geth.ExpectRegexp(tt.result)
+		geth.ExpectExit()
 	}
 }

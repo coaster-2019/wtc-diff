@@ -16,7 +16,7 @@
 
 // Contains a wrapper for the Wtc client.
 
-package gwtc
+package geth
 
 import (
 	"math/big"

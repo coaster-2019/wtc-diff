@@ -2,19 +2,19 @@
 # with Go source code. If you know what GOPATH is then you probably
 # don't need to bother with make.
 
-.PHONY: gwtc android ios gwtc-cross swarm evm all test clean
-.PHONY: gwtc-linux gwtc-linux-386 gwtc-linux-amd64 gwtc-linux-mips64 gwtc-linux-mips64le
-.PHONY: gwtc-linux-arm gwtc-linux-arm-5 gwtc-linux-arm-6 gwtc-linux-arm-7 gwtc-linux-arm64
-.PHONY: gwtc-darwin gwtc-darwin-386 gwtc-darwin-amd64
-.PHONY: gwtc-windows gwtc-windows-386 gwtc-windows-amd64
+.PHONY: geth android ios geth-cross swarm evm all test clean
+.PHONY: geth-linux geth-linux-386 geth-linux-amd64 geth-linux-mips64 geth-linux-mips64le
+.PHONY: geth-linux-arm geth-linux-arm-5 geth-linux-arm-6 geth-linux-arm-7 geth-linux-arm64
+.PHONY: geth-darwin geth-darwin-386 geth-darwin-amd64
+.PHONY: geth-windows geth-windows-386 geth-windows-amd64
 
 GOBIN = $(shell pwd)/build/bin
 GO ?= latest
 
-gwtc:
-	build/env.sh go run build/ci.go install ./cmd/gwtc
+geth:
+	build/env.sh go run build/ci.go install ./cmd/geth
 	@echo "Done building."
-	@echo "Run \"$(GOBIN)/gwtc\" to launch gwtc."
+	@echo "Run \"$(GOBIN)/geth\" to launch geth."
 
 swarm:
 	build/env.sh go run build/ci.go install ./cmd/swarm
@@ -27,7 +27,7 @@ all:
 android:
 	build/env.sh go run build/ci.go aar --local
 	@echo "Done building."
-	@echo "Import \"$(GOBIN)/gwtc.aar\" to use the library."
+	@echo "Import \"$(GOBIN)/geth.aar\" to use the library."
 
 ios:
 	build/env.sh go run build/ci.go xcode --local
@@ -51,92 +51,92 @@ devtools:
 
 # Cross Compilation Targets (xgo)
 
-gwtc-cross: gwtc-linux gwtc-darwin gwtc-windows gwtc-android gwtc-ios
+geth-cross: geth-linux geth-darwin geth-windows geth-android geth-ios
 	@echo "Full cross compilation done:"
-	@ls -ld $(GOBIN)/gwtc-*
+	@ls -ld $(GOBIN)/geth-*
 
-gwtc-linux: gwtc-linux-386 gwtc-linux-amd64 gwtc-linux-arm gwtc-linux-mips64 gwtc-linux-mips64le
+geth-linux: geth-linux-386 geth-linux-amd64 geth-linux-arm geth-linux-mips64 geth-linux-mips64le
 	@echo "Linux cross compilation done:"
-	@ls -ld $(GOBIN)/gwtc-linux-*
+	@ls -ld $(GOBIN)/geth-linux-*
 
-gwtc-linux-386:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/386 -v ./cmd/gwtc
+geth-linux-386:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/386 -v ./cmd/geth
 	@echo "Linux 386 cross compilation done:"
-	@ls -ld $(GOBIN)/gwtc-linux-* | grep 386
+	@ls -ld $(GOBIN)/geth-linux-* | grep 386
 
-gwtc-linux-amd64:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/amd64 -v ./cmd/gwtc
+geth-linux-amd64:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/amd64 -v ./cmd/geth
 	@echo "Linux amd64 cross compilation done:"
-	@ls -ld $(GOBIN)/gwtc-linux-* | grep amd64
+	@ls -ld $(GOBIN)/geth-linux-* | grep amd64
 
-gwtc-linux-arm: gwtc-linux-arm-5 gwtc-linux-arm-6 gwtc-linux-arm-7 gwtc-linux-arm64
+geth-linux-arm: geth-linux-arm-5 geth-linux-arm-6 geth-linux-arm-7 geth-linux-arm64
 	@echo "Linux ARM cross compilation done:"
-	@ls -ld $(GOBIN)/gwtc-linux-* | grep arm
+	@ls -ld $(GOBIN)/geth-linux-* | grep arm
 
-gwtc-linux-arm-5:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/arm-5 -v ./cmd/gwtc
+geth-linux-arm-5:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/arm-5 -v ./cmd/geth
 	@echo "Linux ARMv5 cross compilation done:"
-	@ls -ld $(GOBIN)/gwtc-linux-* | grep arm-5
+	@ls -ld $(GOBIN)/geth-linux-* | grep arm-5
 
-gwtc-linux-arm-6:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/arm-6 -v ./cmd/gwtc
+geth-linux-arm-6:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/arm-6 -v ./cmd/geth
 	@echo "Linux ARMv6 cross compilation done:"
-	@ls -ld $(GOBIN)/gwtc-linux-* | grep arm-6
+	@ls -ld $(GOBIN)/geth-linux-* | grep arm-6
 
-gwtc-linux-arm-7:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/arm-7 -v ./cmd/gwtc
+geth-linux-arm-7:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/arm-7 -v ./cmd/geth
 	@echo "Linux ARMv7 cross compilation done:"
-	@ls -ld $(GOBIN)/gwtc-linux-* | grep arm-7
+	@ls -ld $(GOBIN)/geth-linux-* | grep arm-7
 
-gwtc-linux-arm64:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/arm64 -v ./cmd/gwtc
+geth-linux-arm64:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/arm64 -v ./cmd/geth
 	@echo "Linux ARM64 cross compilation done:"
-	@ls -ld $(GOBIN)/gwtc-linux-* | grep arm64
+	@ls -ld $(GOBIN)/geth-linux-* | grep arm64
 
-gwtc-linux-mips:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/mips --ldflags '-extldflags "-static"' -v ./cmd/gwtc
+geth-linux-mips:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/mips --ldflags '-extldflags "-static"' -v ./cmd/geth
 	@echo "Linux MIPS cross compilation done:"
-	@ls -ld $(GOBIN)/gwtc-linux-* | grep mips
+	@ls -ld $(GOBIN)/geth-linux-* | grep mips
 
-gwtc-linux-mipsle:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/mipsle --ldflags '-extldflags "-static"' -v ./cmd/gwtc
+geth-linux-mipsle:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/mipsle --ldflags '-extldflags "-static"' -v ./cmd/geth
 	@echo "Linux MIPSle cross compilation done:"
-	@ls -ld $(GOBIN)/gwtc-linux-* | grep mipsle
+	@ls -ld $(GOBIN)/geth-linux-* | grep mipsle
 
-gwtc-linux-mips64:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/mips64 --ldflags '-extldflags "-static"' -v ./cmd/gwtc
+geth-linux-mips64:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/mips64 --ldflags '-extldflags "-static"' -v ./cmd/geth
 	@echo "Linux MIPS64 cross compilation done:"
-	@ls -ld $(GOBIN)/gwtc-linux-* | grep mips64
+	@ls -ld $(GOBIN)/geth-linux-* | grep mips64
 
-gwtc-linux-mips64le:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/mips64le --ldflags '-extldflags "-static"' -v ./cmd/gwtc
+geth-linux-mips64le:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/mips64le --ldflags '-extldflags "-static"' -v ./cmd/geth
 	@echo "Linux MIPS64le cross compilation done:"
-	@ls -ld $(GOBIN)/gwtc-linux-* | grep mips64le
+	@ls -ld $(GOBIN)/geth-linux-* | grep mips64le
 
-gwtc-darwin: gwtc-darwin-386 gwtc-darwin-amd64
+geth-darwin: geth-darwin-386 geth-darwin-amd64
 	@echo "Darwin cross compilation done:"
-	@ls -ld $(GOBIN)/gwtc-darwin-*
+	@ls -ld $(GOBIN)/geth-darwin-*
 
-gwtc-darwin-386:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=darwin/386 -v ./cmd/gwtc
+geth-darwin-386:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=darwin/386 -v ./cmd/geth
 	@echo "Darwin 386 cross compilation done:"
-	@ls -ld $(GOBIN)/gwtc-darwin-* | grep 386
+	@ls -ld $(GOBIN)/geth-darwin-* | grep 386
 
-gwtc-darwin-amd64:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=darwin/amd64 -v ./cmd/gwtc
+geth-darwin-amd64:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=darwin/amd64 -v ./cmd/geth
 	@echo "Darwin amd64 cross compilation done:"
-	@ls -ld $(GOBIN)/gwtc-darwin-* | grep amd64
+	@ls -ld $(GOBIN)/geth-darwin-* | grep amd64
 
-gwtc-windows: gwtc-windows-386 gwtc-windows-amd64
+geth-windows: geth-windows-386 geth-windows-amd64
 	@echo "Windows cross compilation done:"
-	@ls -ld $(GOBIN)/gwtc-windows-*
+	@ls -ld $(GOBIN)/geth-windows-*
 
-gwtc-windows-386:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=windows/386 -v ./cmd/gwtc
+geth-windows-386:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=windows/386 -v ./cmd/geth
 	@echo "Windows 386 cross compilation done:"
-	@ls -ld $(GOBIN)/gwtc-windows-* | grep 386
+	@ls -ld $(GOBIN)/geth-windows-* | grep 386
 
-gwtc-windows-amd64:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=windows/amd64 -v ./cmd/gwtc
+geth-windows-amd64:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=windows/amd64 -v ./cmd/geth
 	@echo "Windows amd64 cross compilation done:"
-	@ls -ld $(GOBIN)/gwtc-windows-* | grep amd64
+	@ls -ld $(GOBIN)/geth-windows-* | grep amd64

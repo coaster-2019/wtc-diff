@@ -286,11 +286,11 @@ func Wait4(pid int, wstatus *WaitStatus, options int, rusage *Rusage) (int, erro
 	return wpid, nil
 }
 
-//sys	gwtcostname(buf []byte) (n int, err error)
+//sys	gethostname(buf []byte) (n int, err error)
 
 func Gwtcostname() (name string, err error) {
 	var buf [MaxHostNameLen]byte
-	n, err := gwtcostname(buf[:])
+	n, err := gethostname(buf[:])
 	if n != 0 {
 		return "", err
 	}

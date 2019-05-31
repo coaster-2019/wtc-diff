@@ -22,7 +22,7 @@ Section "Uninstall"
   SimpleFC::AdvRemoveRule "Gwtc UDP discovery (UDP:10101)"
 
   # Remove IPC endpoint (https://github.com/ethereum/EIPs/issues/147)
-  ${un.EnvVarUpdate} $0 "WTC_SOCKET" "R" "HKLM" "\\.\pipe\gwtc.ipc"
+  ${un.EnvVarUpdate} $0 "WTC_SOCKET" "R" "HKLM" "\\.\pipe\geth.ipc"
 
   # Remove install directory from PATH
   Push "$INSTDIR"

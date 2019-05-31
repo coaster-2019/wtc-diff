@@ -14,7 +14,7 @@ Pod::Spec.new do |spec|
 	spec.ios.vendored_frameworks = 'Frameworks/Gwtc.framework'
 
 	spec.prepare_command = <<-CMD
-    curl https://gwtcstore.blob.core.windows.net/builds/{{.Archive}}.tar.gz | tar -xvz
+    curl https://gethstore.blob.core.windows.net/builds/{{.Archive}}.tar.gz | tar -xvz
     mkdir Frameworks
     mv {{.Archive}}/Gwtc.framework Frameworks
     rm -rf {{.Archive}}

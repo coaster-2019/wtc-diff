@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
 
-// gwtc is the official command-line client for Wtc.
+// geth is the official command-line client for Wtc.
 package main
 
 import (
@@ -40,7 +40,7 @@ import (
 )
 
 const (
-	clientIdentifier = "gwtc" // Client identifier to advertise over the network
+	clientIdentifier = "geth" // Client identifier to advertise over the network
 )
 
 var (
@@ -141,7 +141,7 @@ var (
 
 func init() {
 	// Initialize the CLI app and start Gwtc
-	app.Action = gwtc
+	app.Action = geth
 	app.HideVersion = true // we have a command to print the version
 	app.Copyright = "Copyright 2018-2019 The walton Authors"
 	app.Commands = []cli.Command{
@@ -203,10 +203,10 @@ func main() {
 	}
 }
 
-// gwtc is the main entry point into the system if no special subcommand is ran.
+// geth is the main entry point into the system if no special subcommand is ran.
 // It creates a default node based on the command line arguments and runs it in
 // blocking mode, waiting for it to be shut down.
-func gwtc(ctx *cli.Context) error {
+func geth(ctx *cli.Context) error {
 	node := makeFullNode(ctx)
 	startNode(ctx, node)
 	node.Wait()

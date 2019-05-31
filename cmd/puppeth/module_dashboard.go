@@ -82,7 +82,7 @@ var dashboardContent = `
 									{{if .FaucetPage}}<li><a onclick="load('//{{.FaucetPage}}')"><i class="fa fa-bath"></i> Crypto Faucet</a></li>{{end}}
 									<li id="connect"><a><i class="fa fa-plug"></i> Connect Yourself</a>
 										<ul id="connect_list" class="nav child_menu">
-											<li><a onclick="$('#connect').removeClass('active'); $('#connect_list').toggle(); load('#connect-go-ethereum-gwtc')">Go Wtc: Gwtc</a></li>
+											<li><a onclick="$('#connect').removeClass('active'); $('#connect_list').toggle(); load('#connect-go-ethereum-geth')">Go Wtc: Gwtc</a></li>
 											<li><a onclick="$('#connect').removeClass('active'); $('#connect_list').toggle(); load('#connect-go-ethereum-mist')">Go Wtc: Wallet & Mist</a></li>
 											<li><a onclick="$('#connect').removeClass('active'); $('#connect_list').toggle(); load('#connect-go-ethereum-mobile')">Go Wtc: Android & iOS</a></li>
 										</ul>
@@ -94,7 +94,7 @@ var dashboardContent = `
 					</div>
 				</div>
 				<div class="right_col" role="main" style="padding: 0">
-					<div id="connect-go-ethereum-gwtc" hidden style="padding: 16px;">
+					<div id="connect-go-ethereum-geth" hidden style="padding: 16px;">
 						<div class="page-title">
 							<div class="title_left">
 								<h3>Connect Yourself &ndash; Go Wtc: Gwtc</h3>
@@ -113,11 +113,11 @@ var dashboardContent = `
 										<p>Initial processing required to execute all transactions may require non-negligible time and disk capacity required to store all past state may be non-insignificant. High end machines with SSD storage, modern CPUs and 8GB+ RAM are recommended.</p>
 										<br/>
 										<p>To run an archive node, download <a href="/{{.GwtcGenesis}}"><code>{{.GwtcGenesis}}</code></a> and start Gwtc with:
-											<pre>gwtc --datadir=$HOME/.{{.Network}} init {{.GwtcGenesis}}</pre>
-											<pre>gwtc --networkid={{.NetworkID}} --datadir=$HOME/.{{.Network}} --cache=1024 --syncmode=full{{if .Ethstats}} --ethstats='{{.Ethstats}}'{{end}} --bootnodes={{.BootnodesFullFlat}}</pre>
+											<pre>geth --datadir=$HOME/.{{.Network}} init {{.GwtcGenesis}}</pre>
+											<pre>geth --networkid={{.NetworkID}} --datadir=$HOME/.{{.Network}} --cache=1024 --syncmode=full{{if .Ethstats}} --ethstats='{{.Ethstats}}'{{end}} --bootnodes={{.BootnodesFullFlat}}</pre>
 										</p>
 										<br/>
-										<p>You can download Gwtc from <a href="https://gwtc.wtc.org/downloads/" target="about:blank">https://gwtc.wtc.org/downloads/</a>.</p>
+										<p>You can download Gwtc from <a href="https://geth.wtc.org/downloads/" target="about:blank">https://geth.wtc.org/downloads/</a>.</p>
 									</div>
 								</div>
 							</div>
@@ -132,11 +132,11 @@ var dashboardContent = `
 										<p>Initial processing required to synchronize is more bandwidth intensive, but is light on the CPU and has significantly reduced disk requirements. Mid range machines with HDD storage, decent CPUs and 4GB+ RAM should be enough.</p>
 										<br/>
 										<p>To run a full node, download <a href="/{{.GwtcGenesis}}"><code>{{.GwtcGenesis}}</code></a> and start Gwtc with:
-											<pre>gwtc --datadir=$HOME/.{{.Network}} init {{.GwtcGenesis}}</pre>
-											<pre>gwtc --networkid={{.NetworkID}} --datadir=$HOME/.{{.Network}} --cache=512{{if .Ethstats}} --ethstats='{{.Ethstats}}'{{end}} --bootnodes={{.BootnodesFullFlat}}</pre>
+											<pre>geth --datadir=$HOME/.{{.Network}} init {{.GwtcGenesis}}</pre>
+											<pre>geth --networkid={{.NetworkID}} --datadir=$HOME/.{{.Network}} --cache=512{{if .Ethstats}} --ethstats='{{.Ethstats}}'{{end}} --bootnodes={{.BootnodesFullFlat}}</pre>
 										</p>
 										<br/>
-										<p>You can download Gwtc from <a href="https://gwtc.wtc.org/downloads/" target="about:blank">https://gwtc.wtc.org/downloads/</a>.</p>
+										<p>You can download Gwtc from <a href="https://geth.wtc.org/downloads/" target="about:blank">https://geth.wtc.org/downloads/</a>.</p>
 									</div>
 								</div>
 							</div>
@@ -154,11 +154,11 @@ var dashboardContent = `
 										<p>Initial processing required to synchronize is light, as it only verifies the validity of the headers; similarly required disk capacity is small, tallying around 500 bytes per header. Low end machines with arbitrary storage, weak CPUs and 512MB+ RAM should cope well.</p>
 										<br/>
 										<p>To run a light node, download <a href="/{{.GwtcGenesis}}"><code>{{.GwtcGenesis}}</code></a> and start Gwtc with:
-											<pre>gwtc --datadir=$HOME/.{{.Network}} --light init {{.GwtcGenesis}}</pre>
-											<pre>gwtc --networkid={{.NetworkID}} --datadir=$HOME/.{{.Network}} --syncmode=light{{if .Ethstats}} --ethstats='{{.Ethstats}}'{{end}} --bootnodes={{.BootnodesLightFlat}}</pre>
+											<pre>geth --datadir=$HOME/.{{.Network}} --light init {{.GwtcGenesis}}</pre>
+											<pre>geth --networkid={{.NetworkID}} --datadir=$HOME/.{{.Network}} --syncmode=light{{if .Ethstats}} --ethstats='{{.Ethstats}}'{{end}} --bootnodes={{.BootnodesLightFlat}}</pre>
 										</p>
 										<br/>
-										<p>You can download Gwtc from <a href="https://gwtc.wtc.org/downloads/" target="about:blank">https://gwtc.wtc.org/downloads/</a>.</p>
+										<p>You can download Gwtc from <a href="https://geth.wtc.org/downloads/" target="about:blank">https://geth.wtc.org/downloads/</a>.</p>
 									</div>
 								</div>
 							</div>
@@ -173,11 +173,11 @@ var dashboardContent = `
 										<p>Initial processing required to synchronize is light, as it only verifies the validity of the headers; similarly required disk capacity is small, tallying around 500 bytes per header. Embedded machines with arbitrary storage, low power CPUs and 128MB+ RAM may work.</p>
 										<br/>
 										<p>To run an embedded node, download <a href="/{{.GwtcGenesis}}"><code>{{.GwtcGenesis}}</code></a> and start Gwtc with:
-											<pre>gwtc --datadir=$HOME/.{{.Network}} --light init {{.GwtcGenesis}}</pre>
-											<pre>gwtc --networkid={{.NetworkID}} --datadir=$HOME/.{{.Network}} --cache=32 --syncmode=light{{if .Ethstats}} --ethstats='{{.Ethstats}}'{{end}} --bootnodes={{.BootnodesLightFlat}}</pre>
+											<pre>geth --datadir=$HOME/.{{.Network}} --light init {{.GwtcGenesis}}</pre>
+											<pre>geth --networkid={{.NetworkID}} --datadir=$HOME/.{{.Network}} --cache=32 --syncmode=light{{if .Ethstats}} --ethstats='{{.Ethstats}}'{{end}} --bootnodes={{.BootnodesLightFlat}}</pre>
 										</p>
 										<br/>
-										<p>You can download Gwtc from <a href="https://gwtc.wtc.org/downloads/" target="about:blank">https://gwtc.wtc.org/downloads/</a>.</p>
+										<p>You can download Gwtc from <a href="https://geth.wtc.org/downloads/" target="about:blank">https://geth.wtc.org/downloads/</a>.</p>
 									</div>
 								</div>
 							</div>
@@ -202,10 +202,10 @@ var dashboardContent = `
 										<p>Under the hood the wallet is backed by a go-ethereum full node, meaning that a mid range machine is assumed. Similarly, synchronization is based on <strong>fast-sync</strong>, which will download all blockchain data from the network and make it available to the wallet. Light nodes cannot currently fully back the wallet, but it's a target actively pursued.</p>
 										<br/>
 										<p>To connect with the Wtc Wallet, you'll need to initialize your private network first via Gwtc as the wallet does not currently support calling Gwtc directly. To initialize your local chain, download <a href="/{{.GwtcGenesis}}"><code>{{.GwtcGenesis}}</code></a> and run:
-											<pre>gwtc --datadir=$HOME/.{{.Network}} init {{.GwtcGenesis}}</pre>
+											<pre>geth --datadir=$HOME/.{{.Network}} init {{.GwtcGenesis}}</pre>
 										</p>
 										<p>With your local chain initialized, you can start the Wtc Wallet:
-											<pre>wtcwallet --rpc $HOME/.{{.Network}}/gwtc.ipc --node-networkid={{.NetworkID}} --node-datadir=$HOME/.{{.Network}}{{if .Ethstats}} --node-ethstats='{{.Ethstats}}'{{end}} --node-bootnodes={{.BootnodesFullFlat}}</pre>
+											<pre>wtcwallet --rpc $HOME/.{{.Network}}/geth.ipc --node-networkid={{.NetworkID}} --node-datadir=$HOME/.{{.Network}}{{if .Ethstats}} --node-ethstats='{{.Ethstats}}'{{end}} --node-bootnodes={{.BootnodesFullFlat}}</pre>
 										<p>
 										<br/>
 										<p>You can download the Wtc Wallet from <a href="https://github.com/ethereum/mist/releases" target="about:blank">https://github.com/ethereum/mist/releases</a>.</p>
@@ -223,10 +223,10 @@ var dashboardContent = `
 										<p>Under the hood the browser is backed by a go-ethereum full node, meaning that a mid range machine is assumed. Similarly, synchronization is based on <strong>fast-sync</strong>, which will download all blockchain data from the network and make it available to the wallet. Light nodes cannot currently fully back the wallet, but it's a target actively pursued.</p>
 										<br/>
 										<p>To connect with the Mist browser, you'll need to initialize your private network first via Gwtc as Mist does not currently support calling Gwtc directly. To initialize your local chain, download <a href="/{{.GwtcGenesis}}"><code>{{.GwtcGenesis}}</code></a> and run:
-											<pre>gwtc --datadir=$HOME/.{{.Network}} init {{.GwtcGenesis}}</pre>
+											<pre>geth --datadir=$HOME/.{{.Network}} init {{.GwtcGenesis}}</pre>
 										</p>
 										<p>With your local chain initialized, you can start Mist:
-											<pre>mist --rpc $HOME/.{{.Network}}/gwtc.ipc --node-networkid={{.NetworkID}} --node-datadir=$HOME/.{{.Network}}{{if .Ethstats}} --node-ethstats='{{.Ethstats}}'{{end}} --node-bootnodes={{.BootnodesFullFlat}}</pre>
+											<pre>mist --rpc $HOME/.{{.Network}}/geth.ipc --node-networkid={{.NetworkID}} --node-datadir=$HOME/.{{.Network}}{{if .Ethstats}} --node-ethstats='{{.Ethstats}}'{{end}} --node-bootnodes={{.BootnodesFullFlat}}</pre>
 										<p>
 										<br/>
 										<p>You can download the Mist browser from <a href="https://github.com/ethereum/mist/releases" target="about:blank">https://github.com/ethereum/mist/releases</a>.</p>
@@ -255,8 +255,8 @@ var dashboardContent = `
 										<br/>
 										<p>The stable Android archives are distributed via Maven Central, and the develop snapshots via the Sonatype repositories. Before proceeding, please ensure you have a recent version configured in your Android project. You can find details in <a href="https://github.com/ethereum/go-ethereum/wiki/Mobile:-Introduction#android-archive" target="about:blank">Mobile: Introduction &ndash; Android archive</a>.
 										<p>Before connecting to the Wtc network, download the <a href="/{{.GwtcGenesis}}"><code>{{.GwtcGenesis}}</code></a> genesis json file and either store it in your Android project as a resource file you can access, or save it as a string in a variable. You're going to need to to initialize your client.</p>
-										<p>Inside your Java code you can now import the gwtc archive and connect to Wtc:
-											<pre>import org.wtc.gwtc.*;</pre>
+										<p>Inside your Java code you can now import the geth archive and connect to Wtc:
+											<pre>import org.wtc.geth.*;</pre>
 <pre>
 Enodes bootnodes = new Enodes();{{range .BootnodesLight}}
 bootnodes.append(new Enode("{{.}}"));{{end}}
@@ -286,7 +286,7 @@ node.start();
 										<br/>
 										<p>Both stable and develop builds of the iOS framework are available via CocoaPods. Before proceeding, please ensure you have a recent version configured in your iOS project. You can find details in <a href="https://github.com/ethereum/go-ethereum/wiki/Mobile:-Introduction#ios-framework" target="about:blank">Mobile: Introduction &ndash; iOS framework</a>.
 										<p>Before connecting to the Wtc network, download the <a href="/{{.GwtcGenesis}}"><code>{{.GwtcGenesis}}</code></a> genesis json file and either store it in your iOS project as a resource file you can access, or save it as a string in a variable. You're going to need to to initialize your client.</p>
-										<p>Inside your Swift code you can now import the gwtc framework and connect to Wtc (ObjC should be analogous):
+										<p>Inside your Swift code you can now import the geth framework and connect to Wtc (ObjC should be analogous):
 											<pre>import Gwtc</pre>
 <pre>
 var error: NSError?
@@ -322,7 +322,7 @@ try! node?.start();
 										<p>Puppeth is a tool to aid you in creating a new Wtc network down to the genesis block, bootnodes, signers, ethstats server, crypto faucet, wallet browsers, block explorer, dashboard and more; without the hassle that it would normally entail to manually configure all these services one by one.</p>
 										<p>Puppeth uses ssh to dial in to remote servers, and builds its network components out of docker containers using docker-compose. The user is guided through the process via a command line wizard that does the heavy lifting and topology configuration automatically behind the scenes.</p>
 										<br/>
-										<p>Puppeth is distributed as part of the <a href="https://gwtc.wtc.org/downloads/" target="about:blank">Gwtc &amp; Tools</a> bundles, but can also be installed separately via:<pre>go get github.com/ethereum/go-ethereum/cmd/puppeth</pre></p>
+										<p>Puppeth is distributed as part of the <a href="https://geth.wtc.org/downloads/" target="about:blank">Gwtc &amp; Tools</a> bundles, but can also be installed separately via:<pre>go get github.com/ethereum/go-ethereum/cmd/puppeth</pre></p>
 										<br/>
 										<p><em>Copyright 2017. The go-ethereum Authors.</em></p>
 									</div>
@@ -345,7 +345,7 @@ try! node?.start();
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/gentelella/1.3.0/js/custom.min.js"></script>
 		<script>
 			var load = function(url) {
-				$("#connect-go-ethereum-gwtc").fadeOut(300)
+				$("#connect-go-ethereum-geth").fadeOut(300)
 				$("#connect-go-ethereum-mist").fadeOut(300)
 				$("#connect-go-ethereum-mobile").fadeOut(300)
 				$("#about").fadeOut(300)
