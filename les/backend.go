@@ -32,7 +32,7 @@ import (
 	"github.com/ethereum/go-ethereum/wtc/downloader"
 	"github.com/ethereum/go-ethereum/wtc/filters"
 	"github.com/ethereum/go-ethereum/wtc/gasprice"
-	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/event"
 	"github.com/ethereum/go-ethereum/internal/ethapi"
 	"github.com/ethereum/go-ethereum/light"
@@ -59,7 +59,7 @@ type LightWtc struct {
 	reqDist         *requestDistributor
 	retriever       *retrieveManager
 	// DB interfaces
-	chainDb wtcdb.Database // Block chain database
+	chainDb ethdb.Database // Block chain database
 
 	ApiBackend *LesApiBackend
 

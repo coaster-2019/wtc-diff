@@ -31,7 +31,7 @@ import (
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/core/state"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/trie"
 	"github.com/syndtr/goleveldb/leveldb/util"
@@ -196,7 +196,7 @@ func importChain(ctx *cli.Context) error {
 	fmt.Printf("Import done in %v.\n\n", time.Since(start))
 
 	// Output pre-compaction stats mostly to see the import trashing
-	db := chainDb.(*wtcdb.LDBDatabase)
+	db := chainDb.(*ethdb.LDBDatabase)
 
 	stats, err := db.LDB().GetProperty("leveldb.stats")
 	if err != nil {

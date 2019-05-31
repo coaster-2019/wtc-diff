@@ -30,7 +30,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/vm"
 	"github.com/ethereum/go-ethereum/wtc/downloader"
 	"github.com/ethereum/go-ethereum/wtc/gasprice"
-	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/event"
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/ethereum/go-ethereum/rpc"
@@ -184,7 +184,7 @@ func (b *EthApiBackend) SuggestPrice(ctx context.Context) (*big.Int, error) {
 	return b.gpo.SuggestPrice(ctx)
 }
 
-func (b *EthApiBackend) ChainDb() wtcdb.Database {
+func (b *EthApiBackend) ChainDb() ethdb.Database {
 	return b.eth.ChainDb()
 }
 

@@ -26,7 +26,7 @@ import (
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/rlp"
 )
 
@@ -51,7 +51,7 @@ type TrustedCht struct {
 	Root   common.Hash
 }
 
-func GetTrustedCht(db wtcdb.Database) TrustedCht {
+func GetTrustedCht(db ethdb.Database) TrustedCht {
 	data, _ := db.Get(trustedChtKey)
 	var res TrustedCht
 	if err := rlp.DecodeBytes(data, &res); err != nil {
@@ -60,12 +60,12 @@ func GetTrustedCht(db wtcdb.Database) TrustedCht {
 	return res
 }
 
-func WriteTrustedCht(db wtcdb.Database, cht TrustedCht) {
+func WriteTrustedCht(db ethdb.Database, cht TrustedCht) {
 	data, _ := rlp.EncodeToBytes(cht)
 	db.Put(trustedChtKey, data)
 }
 
-func DeleteTrustedCht(db wtcdb.Database) {
+func DeleteTrustedCht(db ethdb.Database) {
 	db.Delete(trustedChtKey)
 }
 

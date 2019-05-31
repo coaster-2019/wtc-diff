@@ -37,7 +37,7 @@ import (
 	"github.com/ethereum/go-ethereum/wtc/downloader"
 	"github.com/ethereum/go-ethereum/wtc/filters"
 	"github.com/ethereum/go-ethereum/wtc/gasprice"
-	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/event"
 	"github.com/ethereum/go-ethereum/internal/ethapi"
 	"github.com/ethereum/go-ethereum/log"
@@ -71,7 +71,7 @@ type Wtc struct {
 	lesServer       LesServer
 
 	// DB interfaces
-	chainDb wtcdb.Database // Block chain database
+	chainDb ethdb.Database // Block chain database
 
 	eventMux       *event.TypeMux
 	engine         consensus.Engine
@@ -194,19 +194,19 @@ func makeExtraData(extra []byte) []byte {
 }
 
 // CreateDB creates the chain database.
-func CreateDB(ctx *node.ServiceContext, config *Config, name string) (wtcdb.Database, error) {
+func CreateDB(ctx *node.ServiceContext, config *Config, name string) (ethdb.Database, error) {
 	db, err := ctx.OpenDatabase(name, config.DatabaseCache, config.DatabaseHandles)
 	if err != nil {
 		return nil, err
 	}
-	if db, ok := db.(*wtcdb.LDBDatabase); ok {
+	if db, ok := db.(*ethdb.LDBDatabase); ok {
 		db.Meter("eth/db/chaindata/")
 	}
 	return db, nil
 }
 
 // CreateConsensusEngine creates the required type of consensus engine instance for an Wtc service
-func CreateConsensusEngine(ctx *node.ServiceContext, config *Config, chainConfig *params.ChainConfig, db wtcdb.Database) consensus.Engine {
+func CreateConsensusEngine(ctx *node.ServiceContext, config *Config, chainConfig *params.ChainConfig, db ethdb.Database) consensus.Engine {
 	// Otherwise assume proof-of-work
 	switch {
 	case config.PowFake:
@@ -338,7 +338,7 @@ func (s *Wtc) BlockChain() *core.BlockChain       { return s.blockchain }
 func (s *Wtc) TxPool() *core.TxPool               { return s.txPool }
 func (s *Wtc) EventMux() *event.TypeMux           { return s.eventMux }
 func (s *Wtc) Engine() consensus.Engine           { return s.engine }
-func (s *Wtc) ChainDb() wtcdb.Database            { return s.chainDb }
+func (s *Wtc) ChainDb() ethdb.Database            { return s.chainDb }
 func (s *Wtc) IsListening() bool                  { return true } // Always listening
 func (s *Wtc) EthVersion() int                    { return int(s.protocolManager.SubProtocols[0].Version) }
 func (s *Wtc) NetVersion() uint64                 { return s.networkId }

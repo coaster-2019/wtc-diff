@@ -20,13 +20,13 @@ import (
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/ethdb"
 )
 
 var addr = common.BytesToAddress([]byte("test"))
 
 func create() (*ManagedState, *account) {
-	db, _ := wtcdb.NewMemDatabase()
+	db, _ := ethdb.NewMemDatabase()
 	statedb, _ := New(common.Hash{}, NewDatabase(db))
 	ms := ManageState(statedb)
 	ms.StateDB.SetNonce(addr, 100)

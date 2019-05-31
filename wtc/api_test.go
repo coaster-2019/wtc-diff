@@ -23,7 +23,7 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/ethdb"
 )
 
 var dumper = spew.ConfigState{Indent: "    "}
@@ -31,7 +31,7 @@ var dumper = spew.ConfigState{Indent: "    "}
 func TestStorageRangeAt(t *testing.T) {
 	// Create a state where account 0x010000... has a few storage entries.
 	var (
-		db, _    = wtcdb.NewMemDatabase()
+		db, _    = ethdb.NewMemDatabase()
 		state, _ = state.New(common.Hash{}, state.NewDatabase(db))
 		addr     = common.Address{0x01}
 		keys     = []common.Hash{ // hashes of Keys of storage

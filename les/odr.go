@@ -19,19 +19,19 @@ package les
 import (
 	"context"
 
-	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/light"
 	"github.com/ethereum/go-ethereum/log"
 )
 
 // LesOdr implements light.OdrBackend
 type LesOdr struct {
-	db        wtcdb.Database
+	db        ethdb.Database
 	stop      chan struct{}
 	retriever *retrieveManager
 }
 
-func NewLesOdr(db wtcdb.Database, retriever *retrieveManager) *LesOdr {
+func NewLesOdr(db ethdb.Database, retriever *retrieveManager) *LesOdr {
 	return &LesOdr{
 		db:        db,
 		retriever: retriever,
@@ -43,7 +43,7 @@ func (odr *LesOdr) Stop() {
 	close(odr.stop)
 }
 
-func (odr *LesOdr) Database() wtcdb.Database {
+func (odr *LesOdr) Database() ethdb.Database {
 	return odr.db
 }
 

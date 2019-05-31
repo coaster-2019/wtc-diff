@@ -1,5 +1,5 @@
 /*
-  This file is part of cpp-wtc.
+  This file is part of cpp-ethereum.
 
   cpp-wtc is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with cpp-wtc.  If notUUU,see <http://www.gnu.org/licenses/>.
+  along with cpp-ethereum.  If notUUU,see <http://www.gnu.org/licenses/>.
 */
 
 /** @file data_sizes.h

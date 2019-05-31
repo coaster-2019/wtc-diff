@@ -27,7 +27,7 @@ import (
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/wtc"
-	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/les/flowcontrol"
 	"github.com/ethereum/go-ethereum/light"
 	"github.com/ethereum/go-ethereum/log"
@@ -179,7 +179,7 @@ func linRegFromBytes(data []byte) *linReg {
 
 type requestCostStats struct {
 	lock  sync.RWMutex
-	db    wtcdb.Database
+	db    ethdb.Database
 	stats map[uint64]*linReg
 }
 
@@ -190,7 +190,7 @@ type requestCostStatsRlp []struct {
 
 var rcStatsKey = []byte("_requestCostStats")
 
-func newCostStats(db wtcdb.Database) *requestCostStats {
+func newCostStats(db ethdb.Database) *requestCostStats {
 	stats := make(map[uint64]*linReg)
 	for _, code := range reqList {
 		stats[code] = &linReg{cnt: 100}
@@ -333,20 +333,20 @@ var (
 	chtPrefix  = []byte("cht")           // chtPrefix + chtNum (uint64 big endian) -> trie root hash
 )
 
-func getChtRoot(db wtcdb.Database, num uint64) common.Hash {
+func getChtRoot(db ethdb.Database, num uint64) common.Hash {
 	var encNumber [8]byte
 	binary.BigEndian.PutUint64(encNumber[:], num)
 	data, _ := db.Get(append(chtPrefix, encNumber[:]...))
 	return common.BytesToHash(data)
 }
 
-func storeChtRoot(db wtcdb.Database, num uint64, root common.Hash) {
+func storeChtRoot(db ethdb.Database, num uint64, root common.Hash) {
 	var encNumber [8]byte
 	binary.BigEndian.PutUint64(encNumber[:], num)
 	db.Put(append(chtPrefix, encNumber[:]...), root[:])
 }
 
-func makeCht(db wtcdb.Database) bool {
+func makeCht(db ethdb.Database) bool {
 	headHash := core.GetHeadBlockHash(db)
 	headNum := core.GetBlockNumber(db, headHash)
 

@@ -27,7 +27,7 @@ import (
 	"sync"
 
 	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/event"
 	"github.com/ethereum/go-ethereum/internal/debug"
 	"github.com/ethereum/go-ethereum/log"
@@ -635,11 +635,11 @@ func (n *Node) EventMux() *event.TypeMux {
 // OpenDatabase opens an existing database with the given name (or creates one if no
 // previous can be found) from within the node's instance directory. If the node is
 // ephemeral, a memory database is returned.
-func (n *Node) OpenDatabase(name string, cache, handles int) (wtcdb.Database, error) {
+func (n *Node) OpenDatabase(name string, cache, handles int) (ethdb.Database, error) {
 	if n.config.DataDir == "" {
-		return wtcdb.NewMemDatabase()
+		return ethdb.NewMemDatabase()
 	}
-	return wtcdb.NewLDBDatabase(n.config.resolvePath(name), cache, handles)
+	return ethdb.NewLDBDatabase(n.config.resolvePath(name), cache, handles)
 }
 
 // ResolvePath returns the absolute path of a resource in the instance directory.

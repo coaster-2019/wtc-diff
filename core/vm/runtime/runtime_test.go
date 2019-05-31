@@ -25,7 +25,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/state"
 	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/ethdb"
 )
 
 func TestDefaults(t *testing.T) {
@@ -94,7 +94,7 @@ func TestExecute(t *testing.T) {
 }
 
 func TestCall(t *testing.T) {
-	db, _ := wtcdb.NewMemDatabase()
+	db, _ := ethdb.NewMemDatabase()
 	state, _ := state.New(common.Hash{}, state.NewDatabase(db))
 	address := common.HexToAddress("0x0a")
 	state.SetCode(address, []byte{

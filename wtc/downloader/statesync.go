@@ -26,7 +26,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/state"
 	"github.com/ethereum/go-ethereum/crypto/sha3"
-	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/trie"
 )
@@ -316,7 +316,7 @@ func (s *stateSync) loop() error {
 }
 
 func (s *stateSync) commit(force bool) error {
-	if !force && s.bytesUncommitted < wtcdb.IdealBatchSize {
+	if !force && s.bytesUncommitted < ethdb.IdealBatchSize {
 		return nil
 	}
 	start := time.Now()

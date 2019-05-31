@@ -28,7 +28,7 @@ import (
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/params"
 )
 
@@ -81,8 +81,8 @@ func TestTxPool(t *testing.T) {
 	}
 
 	var (
-		sdb, _  = wtcdb.NewMemDatabase()
-		ldb, _  = wtcdb.NewMemDatabase()
+		sdb, _  = ethdb.NewMemDatabase()
+		ldb, _  = ethdb.NewMemDatabase()
 		gspec   = core.Genesis{Alloc: core.GenesisAlloc{testBankAddress: {Balance: testBankFunds}}}
 		genesis = gspec.MustCommit(sdb)
 	)

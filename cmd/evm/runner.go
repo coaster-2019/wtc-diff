@@ -34,7 +34,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/state"
 	"github.com/ethereum/go-ethereum/core/vm"
 	"github.com/ethereum/go-ethereum/core/vm/runtime"
-	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/params"
 	cli "gopkg.in/urfave/cli.v1"
@@ -99,7 +99,7 @@ func runCmd(ctx *cli.Context) error {
 		_, statedb = gen.ToBlock()
 		chainConfig = gen.Config
 	} else {
-		db, _ := wtcdb.NewMemDatabase()
+		db, _ := ethdb.NewMemDatabase()
 		statedb, _ = state.New(common.Hash{}, state.NewDatabase(db))
 	}
 	if ctx.GlobalString(SenderFlag.Name) != "" {

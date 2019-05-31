@@ -283,13 +283,13 @@ func startNode(ctx *cli.Context, stack *node.Node) {
 			type threaded interface {
 				SetThreads(threads int)
 			}
-			if th, ok := wtc.Engine().(threaded); ok {
+			if th, ok := ethereum.Engine().(threaded); ok {
 				th.SetThreads(threads)
 			}
 		}
 		// Set the gas price to the limits from the CLI and start mining
-		wtc.TxPool().SetGasPrice(utils.GlobalBig(ctx, utils.GasPriceFlag.Name))
-		if err := wtc.StartMining(true); err != nil {
+		ethereum.TxPool().SetGasPrice(utils.GlobalBig(ctx, utils.GasPriceFlag.Name))
+		if err := ethereum.StartMining(true); err != nil {
 			utils.Fatalf("Failed to start mining: %v", err)
 		}
 	}

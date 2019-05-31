@@ -21,7 +21,7 @@ import (
 	"fmt"
 
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/event"
 )
 
@@ -30,7 +30,7 @@ type TestManager struct {
 	// stateManager *StateManager
 	eventMux *event.TypeMux
 
-	db         wtcdb.Database
+	db         ethdb.Database
 	txPool     *TxPool
 	blockChain *BlockChain
 	Blocks     []*types.Block
@@ -72,12 +72,12 @@ func (tm *TestManager) EventMux() *event.TypeMux {
 // 	return nil
 // }
 
-func (tm *TestManager) Db() wtcdb.Database {
+func (tm *TestManager) Db() ethdb.Database {
 	return tm.db
 }
 
 func NewTestManager() *TestManager {
-	db, err := wtcdb.NewMemDatabase()
+	db, err := ethdb.NewMemDatabase()
 	if err != nil {
 		fmt.Println("Could not create mem-db, failing")
 		return nil

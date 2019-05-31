@@ -32,7 +32,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/wtc/downloader"
 	"github.com/ethereum/go-ethereum/wtc/fetcher"
-	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/event"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/p2p"
@@ -70,7 +70,7 @@ type ProtocolManager struct {
 
 	txpool      txPool
 	blockchain  *core.BlockChain
-	chaindb     wtcdb.Database
+	chaindb     ethdb.Database
 	chainconfig *params.ChainConfig
 	maxPeers    int
 
@@ -98,7 +98,7 @@ type ProtocolManager struct {
 
 // NewProtocolManager returns a new wtc sub protocol manager. The Wtc sub protocol manages peers capable
 // with the wtc network.
-func NewProtocolManager(config *params.ChainConfig, mode downloader.SyncMode, networkId uint64, mux *event.TypeMux, txpool txPool, engine consensus.Engine, blockchain *core.BlockChain, chaindb wtcdb.Database) (*ProtocolManager, error) {
+func NewProtocolManager(config *params.ChainConfig, mode downloader.SyncMode, networkId uint64, mux *event.TypeMux, txpool txPool, engine consensus.Engine, blockchain *core.BlockChain, chaindb ethdb.Database) (*ProtocolManager, error) {
 	// Create the protocol manager with the base fields
 	manager := &ProtocolManager{
 		networkId:   networkId,

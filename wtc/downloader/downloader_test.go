@@ -30,7 +30,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/state"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/event"
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/ethereum/go-ethereum/trie"
@@ -53,8 +53,8 @@ type downloadTester struct {
 	downloader *Downloader
 
 	genesis *types.Block   // Genesis blocks used by the tester and peers
-	stateDb wtcdb.Database // Database used by the tester for syncing from peers
-	peerDb  wtcdb.Database // Database of the peers containing all data
+	stateDb ethdb.Database // Database used by the tester for syncing from peers
+	peerDb  ethdb.Database // Database of the peers containing all data
 
 	ownHashes   []common.Hash                  // Hash chain belonging to the tester
 	ownHeaders  map[common.Hash]*types.Header  // Headers belonging to the tester
@@ -75,7 +75,7 @@ type downloadTester struct {
 
 // newTester creates a new downloader test mocker.
 func newTester() *downloadTester {
-	testdb, _ := wtcdb.NewMemDatabase()
+	testdb, _ := ethdb.NewMemDatabase()
 	genesis := core.GenesisBlockForTesting(testdb, testAddress, big.NewInt(1000000000))
 
 	tester := &downloadTester{
@@ -93,7 +93,7 @@ func newTester() *downloadTester {
 		peerChainTds:      make(map[string]map[common.Hash]*big.Int),
 		peerMissingStates: make(map[string]map[common.Hash]bool),
 	}
-	tester.stateDb, _ = wtcdb.NewMemDatabase()
+	tester.stateDb, _ = ethdb.NewMemDatabase()
 	tester.stateDb.Put(genesis.Root().Bytes(), []byte{0x00})
 
 	tester.downloader = New(FullSync, tester.stateDb, new(event.TypeMux), tester, nil, tester.dropPeer)

@@ -33,7 +33,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/wtc"
 	"github.com/ethereum/go-ethereum/wtc/downloader"
-	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/event"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/p2p"
@@ -97,7 +97,7 @@ type ProtocolManager struct {
 	networkId   uint64
 	chainConfig *params.ChainConfig
 	blockchain  BlockChain
-	chainDb     wtcdb.Database
+	chainDb     ethdb.Database
 	odr         *LesOdr
 	server      *LesServer
 	serverPool  *serverPool
@@ -125,7 +125,7 @@ type ProtocolManager struct {
 
 // NewProtocolManager returns a new wtc sub protocol manager. The Wtc sub protocol manages peers capable
 // with the wtc network.
-func NewProtocolManager(chainConfig *params.ChainConfig, lightSync bool, networkId uint64, mux *event.TypeMux, engine consensus.Engine, peers *peerSet, blockchain BlockChain, txpool txPool, chainDb wtcdb.Database, odr *LesOdr, txrelay *LesTxRelay, quitSync chan struct{}, wg *sync.WaitGroup) (*ProtocolManager, error) {
+func NewProtocolManager(chainConfig *params.ChainConfig, lightSync bool, networkId uint64, mux *event.TypeMux, engine consensus.Engine, peers *peerSet, blockchain BlockChain, txpool txPool, chainDb ethdb.Database, odr *LesOdr, txrelay *LesTxRelay, quitSync chan struct{}, wg *sync.WaitGroup) (*ProtocolManager, error) {
 	// Create the protocol manager with the base fields
 	manager := &ProtocolManager{
 		lightSync:   lightSync,

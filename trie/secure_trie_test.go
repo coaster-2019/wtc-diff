@@ -24,19 +24,19 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/ethdb"
 )
 
 func newEmptySecure() *SecureTrie {
-	db, _ := wtcdb.NewMemDatabase()
+	db, _ := ethdb.NewMemDatabase()
 	trie, _ := NewSecure(common.Hash{}, db, 0)
 	return trie
 }
 
 // makeTestSecureTrie creates a large enough secure trie for testing.
-func makeTestSecureTrie() (wtcdb.Database, *SecureTrie, map[string][]byte) {
+func makeTestSecureTrie() (ethdb.Database, *SecureTrie, map[string][]byte) {
 	// Create an empty trie
-	db, _ := wtcdb.NewMemDatabase()
+	db, _ := ethdb.NewMemDatabase()
 	trie, _ := NewSecure(common.Hash{}, db, 0)
 
 	// Fill it with some arbitrary data

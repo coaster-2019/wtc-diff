@@ -64,11 +64,11 @@ func NewReleaseService(ctx *node.ServiceContext, config Config) (node.Service, e
 	var apiBackend ethapi.Backend
 	var wtc *eth.Wtc
 	if err := ctx.Service(&wtc); err == nil {
-		apiBackend = wtc.ApiBackend
+		apiBackend = ethereum.ApiBackend
 	} else {
 		var wtc *les.LightWtc
 		if err := ctx.Service(&wtc); err == nil {
-			apiBackend = wtc.ApiBackend
+			apiBackend = ethereum.ApiBackend
 		} else {
 			return nil, err
 		}

@@ -27,15 +27,15 @@ import (
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/core/state"
 	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/ethereum/go-ethereum/trie"
 )
 
 func TestNodeIterator(t *testing.T) {
 	var (
-		fulldb, _  = wtcdb.NewMemDatabase()
-		lightdb, _ = wtcdb.NewMemDatabase()
+		fulldb, _  = ethdb.NewMemDatabase()
+		lightdb, _ = ethdb.NewMemDatabase()
 		gspec      = core.Genesis{Alloc: core.GenesisAlloc{testBankAddress: {Balance: testBankFunds}}}
 		genesis    = gspec.MustCommit(fulldb)
 	)

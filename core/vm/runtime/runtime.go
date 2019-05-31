@@ -25,7 +25,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/state"
 	"github.com/ethereum/go-ethereum/core/vm"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/params"
 )
 
@@ -99,7 +99,7 @@ func Execute(code, input []byte, cfg *Config) ([]byte, *state.StateDB, error) {
 	setDefaults(cfg)
 
 	if cfg.State == nil {
-		db, _ := wtcdb.NewMemDatabase()
+		db, _ := ethdb.NewMemDatabase()
 		cfg.State, _ = state.New(common.Hash{}, state.NewDatabase(db))
 	}
 	var (
@@ -130,7 +130,7 @@ func Create(input []byte, cfg *Config) ([]byte, common.Address, uint64, error) {
 	setDefaults(cfg)
 
 	if cfg.State == nil {
-		db, _ := wtcdb.NewMemDatabase()
+		db, _ := ethdb.NewMemDatabase()
 		cfg.State, _ = state.New(common.Hash{}, state.NewDatabase(db))
 	}
 	var (

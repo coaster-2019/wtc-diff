@@ -29,7 +29,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/state"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/event"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/params"
@@ -107,7 +107,7 @@ type worker struct {
 	eth     Backend
 	chain   *core.BlockChain
 	proc    core.Validator
-	chainDb wtcdb.Database
+	chainDb ethdb.Database
 
 	coinbase common.Address
 	extra    []byte

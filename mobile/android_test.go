@@ -40,7 +40,7 @@ import android.test.MoreAsserts;
 import java.math.BigInteger;
 import java.util.Arrays;
 
-import org.wtc.geth.*;
+import org.ethereum.geth.*;
 
 public class AndroidTest extends InstrumentationTestCase {
 	public AndroidTest() {}
@@ -227,7 +227,7 @@ func TestAndroid(t *testing.T) {
 
 const androidManifest = `<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="org.wtc.gethtest"
+          package="org.ethereum.gethtest"
 	  android:versionCode="1"
 	  android:versionName="1.0">
 

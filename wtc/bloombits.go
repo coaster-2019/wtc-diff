@@ -24,7 +24,7 @@ import (
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/core/bloombits"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/params"
 )
 
@@ -90,7 +90,7 @@ const (
 type BloomIndexer struct {
 	size uint64 // section size to generate bloombits for
 
-	db  wtcdb.Database       // database instance to write index data and metadata into
+	db  ethdb.Database       // database instance to write index data and metadata into
 	gen *bloombits.Generator // generator to rotate the bloom bits crating the bloom index
 
 	section uint64      // Section is the section number being processed currently
@@ -99,12 +99,12 @@ type BloomIndexer struct {
 
 // NewBloomIndexer returns a chain indexer that generates bloom bits data for the
 // canonical chain for fast logs filtering.
-func NewBloomIndexer(db wtcdb.Database, size uint64) *core.ChainIndexer {
+func NewBloomIndexer(db ethdb.Database, size uint64) *core.ChainIndexer {
 	backend := &BloomIndexer{
 		db:   db,
 		size: size,
 	}
-	table := wtcdb.NewTable(db, string(core.BloomBitsIndexPrefix))
+	table := ethdb.NewTable(db, string(core.BloomBitsIndexPrefix))
 
 	return core.NewChainIndexer(db, table, backend, size, bloomConfirms, bloomThrottling, "bloombits")
 }

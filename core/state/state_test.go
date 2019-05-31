@@ -23,12 +23,12 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/ethdb"
 	checker "gopkg.in/check.v1"
 )
 
 type StateSuite struct {
-	db    *wtcdb.MemDatabase
+	db    *ethdb.MemDatabase
 	state *StateDB
 }
 
@@ -87,7 +87,7 @@ func (s *StateSuite) TestDump(c *checker.C) {
 }
 
 func (s *StateSuite) SetUpTest(c *checker.C) {
-	s.db, _ = wtcdb.NewMemDatabase()
+	s.db, _ = ethdb.NewMemDatabase()
 	s.state, _ = New(common.Hash{}, NewDatabase(s.db))
 }
 
@@ -133,7 +133,7 @@ func (s *StateSuite) TestSnapshotEmpty(c *checker.C) {
 // use testing instead of checker because checker does not support
 // printing/logging in tests (-check.vv does not work)
 func TestSnapshot2(t *testing.T) {
-	db, _ := wtcdb.NewMemDatabase()
+	db, _ := ethdb.NewMemDatabase()
 	state, _ := New(common.Hash{}, NewDatabase(db))
 
 	stateobjaddr0 := toAddr([]byte("so0"))

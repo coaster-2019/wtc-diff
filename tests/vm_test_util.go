@@ -29,7 +29,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/state"
 	"github.com/ethereum/go-ethereum/core/vm"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/params"
 )
 
@@ -79,7 +79,7 @@ type vmExecMarshaling struct {
 }
 
 func (t *VMTest) Run(vmconfig vm.Config) error {
-	db, _ := wtcdb.NewMemDatabase()
+	db, _ := ethdb.NewMemDatabase()
 	statedb := makePreState(db, t.json.Pre)
 	ret, gasRemaining, err := t.exec(statedb, vmconfig)
 

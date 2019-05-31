@@ -16,7 +16,7 @@
 
 package storage
 
-// this is a clone of an earlier state of the wtc wtcdb/database
+// this is a clone of an earlier state of the wtc ethdb/database
 // no need for queueing/caching
 
 import (

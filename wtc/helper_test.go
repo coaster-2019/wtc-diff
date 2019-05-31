@@ -34,7 +34,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/vm"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/wtc/downloader"
-	"github.com/ethereum/go-ethereum/wtcdb"
+	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/event"
 	"github.com/ethereum/go-ethereum/p2p"
 	"github.com/ethereum/go-ethereum/p2p/discover"
@@ -53,7 +53,7 @@ func newTestProtocolManager(mode downloader.SyncMode, blocks int, generator func
 	var (
 		evmux  = new(event.TypeMux)
 		engine = ethash.NewFaker()
-		db, _  = wtcdb.NewMemDatabase()
+		db, _  = ethdb.NewMemDatabase()
 		gspec  = &core.Genesis{
 			Config: params.TestChainConfig,
 			Alloc:  core.GenesisAlloc{testBank: {Balance: big.NewInt(1000000)}},
