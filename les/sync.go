@@ -21,7 +21,7 @@ import (
 	"time"
 
 	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/wtc/downloader"
+	"github.com/ethereum/go-ethereum/ethereum/downloader"
 	"github.com/ethereum/go-ethereum/light"
 )
 

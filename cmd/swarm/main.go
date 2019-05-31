@@ -38,7 +38,7 @@ import (
 	"github.com/ethereum/go-ethereum/console"
 	"github.com/ethereum/go-ethereum/contracts/ens"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/wtcclient"
+	"github.com/ethereum/go-ethereum/ethereumclient"
 	"github.com/ethereum/go-ethereum/internal/debug"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/node"
@@ -256,12 +256,12 @@ Manage the local chunk database.
 					Description: `
 Export a local chunk database as a tar archive (use - to send to stdout).
 
-    swarm db export ~/.wtc/swarm/bzz-KEY/chunks chunks.tar
+    swarm db export ~/.ethereum/swarm/bzz-KEY/chunks chunks.tar
 
 The export may be quite large, consider piping the output through the Unix
 pv(1) tool to get a progress bar:
 
-    swarm db export ~/.wtc/swarm/bzz-KEY/chunks - | pv > chunks.tar
+    swarm db export ~/.ethereum/swarm/bzz-KEY/chunks - | pv > chunks.tar
 `,
 				},
 				{
@@ -272,12 +272,12 @@ pv(1) tool to get a progress bar:
 					Description: `
 Import chunks from a tar archive into a local chunk database (use - to read from stdin).
 
-    swarm db import ~/.wtc/swarm/bzz-KEY/chunks chunks.tar
+    swarm db import ~/.ethereum/swarm/bzz-KEY/chunks chunks.tar
 
 The import may be quite large, consider piping the input through the Unix
 pv(1) tool to get a progress bar:
 
-    pv chunks.tar | swarm db import ~/.wtc/swarm/bzz-KEY/chunks -
+    pv chunks.tar | swarm db import ~/.ethereum/swarm/bzz-KEY/chunks -
 `,
 				},
 				{
@@ -428,7 +428,7 @@ func detectEnsAddr(client *rpc.Client) (common.Address, error) {
 		return common.Address{}, err
 	}
 
-	block, err := wtcclient.NewClient(client).BlockByNumber(ctx, big.NewInt(0))
+	block, err := ethereumclient.NewClient(client).BlockByNumber(ctx, big.NewInt(0))
 	if err != nil {
 		return common.Address{}, err
 	}
@@ -482,23 +482,23 @@ func registerBzzService(ctx *cli.Context, stack *node.Node) {
 	cors := ctx.GlobalString(CorsStringFlag.Name)
 
 	boot := func(ctx *node.ServiceContext) (node.Service, error) {
-		var swapClient *wtcclient.Client
+		var swapClient *ethereumclient.Client
 		if swapapi != "" {
 			log.Info("connecting to SWAP API", "url", swapapi)
-			swapClient, err = wtcclient.Dial(swapapi)
+			swapClient, err = ethereumclient.Dial(swapapi)
 			if err != nil {
 				return nil, fmt.Errorf("error connecting to SWAP API %s: %s", swapapi, err)
 			}
 		}
 
-		var ensClient *wtcclient.Client
+		var ensClient *ethereumclient.Client
 		if ensapi != "" {
 			log.Info("connecting to ENS API", "url", ensapi)
 			client, err := rpc.Dial(ensapi)
 			if err != nil {
 				return nil, fmt.Errorf("error connecting to ENS API %s: %s", ensapi, err)
 			}
-			ensClient = wtcclient.NewClient(client)
+			ensClient = ethereumclient.NewClient(client)
 
 			if ensAddr != "" {
 				bzzconfig.EnsRoot = common.HexToAddress(ensAddr)

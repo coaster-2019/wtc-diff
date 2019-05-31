@@ -28,7 +28,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/wtc"
+	"github.com/ethereum/go-ethereum/ethereum"
 	"github.com/ethereum/go-ethereum/internal/jsre"
 	"github.com/ethereum/go-ethereum/node"
 )
@@ -73,7 +73,7 @@ func (p *hookedPrompter) SetWordCompleter(completer WordCompleter) {}
 type tester struct {
 	workspace string
 	stack     *node.Node
-	wtc  *eth.Ethereum
+	ethereum  *eth.Ethereum
 	console   *Console
 	input     *hookedPrompter
 	output    *bytes.Buffer
@@ -127,13 +127,13 @@ func newTester(t *testing.T, confOverride func(*eth.Config)) *tester {
 		t.Fatalf("failed to create JavaScript console: %v", err)
 	}
 	// Create the final tester and return
-	var wtc *eth.Ethereum
-	stack.Service(&wtc)
+	var ethereum *eth.Ethereum
+	stack.Service(&ethereum)
 
 	return &tester{
 		workspace: workspace,
 		stack:     stack,
-		wtc:  wtc,
+		ethereum:  ethereum,
 		console:   console,
 		input:     prompter,
 		output:    printer,

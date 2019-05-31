@@ -27,7 +27,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/wtc"
+	"github.com/ethereum/go-ethereum/ethereum"
 	"github.com/ethereum/go-ethereum/internal/ethapi"
 	"github.com/ethereum/go-ethereum/les"
 	"github.com/ethereum/go-ethereum/log"
@@ -62,12 +62,12 @@ type ReleaseService struct {
 func NewReleaseService(ctx *node.ServiceContext, config Config) (node.Service, error) {
 	// Retrieve the Ethereum service dependency to access the blockchain
 	var apiBackend ethapi.Backend
-	var wtc *eth.Ethereum
-	if err := ctx.Service(&wtc); err == nil {
+	var ethereum *eth.Ethereum
+	if err := ctx.Service(&ethereum); err == nil {
 		apiBackend = ethereum.ApiBackend
 	} else {
-		var wtc *les.LightEthereum
-		if err := ctx.Service(&wtc); err == nil {
+		var ethereum *les.LightEthereum
+		if err := ctx.Service(&ethereum); err == nil {
 			apiBackend = ethereum.ApiBackend
 		} else {
 			return nil, err

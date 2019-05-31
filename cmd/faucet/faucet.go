@@ -43,10 +43,10 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/wtc"
-	"github.com/ethereum/go-ethereum/wtc/downloader"
-	"github.com/ethereum/go-ethereum/wtcclient"
-	"github.com/ethereum/go-ethereum/wtcstats"
+	"github.com/ethereum/go-ethereum/ethereum"
+	"github.com/ethereum/go-ethereum/ethereum/downloader"
+	"github.com/ethereum/go-ethereum/ethereumclient"
+	"github.com/ethereum/go-ethereum/ethereumstats"
 	"github.com/ethereum/go-ethereum/les"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/node"
@@ -191,7 +191,7 @@ type request struct {
 type faucet struct {
 	config *params.ChainConfig // Chain configurations for signing
 	stack  *node.Node          // Ethereum protocol stack
-	client *wtcclient.Client   // Client connection to the Ethereum chain
+	client *ethereumclient.Client   // Client connection to the Ethereum chain
 	index  []byte              // Index page to serve up on the web
 
 	keystore *keystore.KeyStore // Keystore containing the single signer
@@ -260,7 +260,7 @@ func newFaucet(genesis *core.Genesis, port int, enodes []*discv5.Node, network u
 		stack.Stop()
 		return nil, err
 	}
-	client := wtcclient.NewClient(api)
+	client := ethereumclient.NewClient(api)
 
 	return &faucet{
 		config:   genesis.Config,

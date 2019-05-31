@@ -1,4 +1,4 @@
-![](images/wtc_logo.jpg)
+![](images/ethereum_logo.jpg)
 
 # GO WTC
 

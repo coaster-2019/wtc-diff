@@ -25,10 +25,10 @@ import (
 	"path/filepath"
 
 	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/wtc"
-	"github.com/ethereum/go-ethereum/wtc/downloader"
-	"github.com/ethereum/go-ethereum/wtcclient"
-	"github.com/ethereum/go-ethereum/wtcstats"
+	"github.com/ethereum/go-ethereum/ethereum"
+	"github.com/ethereum/go-ethereum/ethereum/downloader"
+	"github.com/ethereum/go-ethereum/ethereumclient"
+	"github.com/ethereum/go-ethereum/ethereumstats"
 	"github.com/ethereum/go-ethereum/les"
 	"github.com/ethereum/go-ethereum/node"
 	"github.com/ethereum/go-ethereum/p2p"
@@ -153,7 +153,7 @@ func NewNode(datadir string, config *NodeConfig) (stack *Node, _ error) {
 		if err := rawStack.Register(func(ctx *node.ServiceContext) (node.Service, error) {
 			return les.New(ctx, &ethConf)
 		}); err != nil {
-			return nil, fmt.Errorf("wtc init: %v", err)
+			return nil, fmt.Errorf("ethereum init: %v", err)
 		}
 		// If netstats reporting is requested, do it
 		if config.EthereumNetStats != "" {
@@ -195,7 +195,7 @@ func (n *Node) GetEthereumClient() (client *EthereumClient, _ error) {
 	if err != nil {
 		return nil, err
 	}
-	return &EthereumClient{wtcclient.NewClient(rpc)}, nil
+	return &EthereumClient{ethereumclient.NewClient(rpc)}, nil
 }
 
 // GetNodeInfo gathers and returns a collection of metadata known about the host.

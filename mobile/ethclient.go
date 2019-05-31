@@ -22,17 +22,17 @@ import (
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/wtcclient"
+	"github.com/ethereum/go-ethereum/ethereumclient"
 )
 
 // EthereumClient provides access to the Ethereum APIs.
 type EthereumClient struct {
-	client *wtcclient.Client
+	client *ethereumclient.Client
 }
 
 // NewEthereumClient connects a client to the given URL.
 func NewEthereumClient(rawurl string) (client *EthereumClient, _ error) {
-	rawClient, err := wtcclient.Dial(rawurl)
+	rawClient, err := ethereumclient.Dial(rawurl)
 	return &EthereumClient{rawClient}, err
 }
 
