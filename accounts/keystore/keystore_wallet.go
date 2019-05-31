@@ -19,7 +19,7 @@ package keystore
 import (
 	"math/big"
 
-	wtc "github.com/ethereum/go-ethereum"
+	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/core/types"
 )
