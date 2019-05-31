@@ -17,9 +17,9 @@ Section "Uninstall"
   rmDir "$SMPROGRAMS\${APPNAME}"
 
   # Firewall - remove rules if exists
-  SimpleFC::AdvRemoveRule "Gwtc incoming peers (TCP:10101)"
-  SimpleFC::AdvRemoveRule "Gwtc outgoing peers (TCP:10101)"
-  SimpleFC::AdvRemoveRule "Gwtc UDP discovery (UDP:10101)"
+  SimpleFC::AdvRemoveRule "Geth incoming peers (TCP:10101)"
+  SimpleFC::AdvRemoveRule "Geth outgoing peers (TCP:10101)"
+  SimpleFC::AdvRemoveRule "Geth UDP discovery (UDP:10101)"
 
   # Remove IPC endpoint (https://github.com/ethereum/EIPs/issues/147)
   ${un.EnvVarUpdate} $0 "WTC_SOCKET" "R" "HKLM" "\\.\pipe\geth.ipc"

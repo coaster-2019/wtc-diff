@@ -12,18 +12,18 @@ Install latest distribution of [Go](https://golang.org "Go") if you don't have i
 
 ### 2. Compile source code
 `# cd /usr/local/src`  
-`# git clone https://github.com/WaltonChain/WaltonChain_Gwtc_Src.git`  
-`# cd WaltonChain_Gwtc_Src`  
+`# git clone https://github.com/WaltonChain/WaltonChain_Geth_Src.git`  
+`# cd WaltonChain_Geth_Src`  
 `# make geth`  
 `# ./build/bin/geth version`  
 
 ### 3. Deploy
-`# cd /usr/local/src/WaltonChain_Gwtc_Src/geth_bin/`  
+`# cd /usr/local/src/WaltonChain_Geth_Src/geth_bin/`  
 `# cp ../build/bin/geth ./bin/geth`  
 `# ./backend.sh`
 
 ### 4. Enter console
-`# cd /usr/local/src/WaltonChain_Gwtc_Src/geth_bin/`  
+`# cd /usr/local/src/WaltonChain_Geth_Src/geth_bin/`  
 `# ./bin/geth attach ./data/geth.ipc`
 
 ### 5. View information of the connected node
@@ -50,11 +50,11 @@ Install latest distribution of [Go](https://golang.org "Go") if you don't have i
 `# exit`
 
 ### 12. View log
-`# cd /usr/local/src/WaltonChain_Gwtc_Src/geth_bin/`  
+`# cd /usr/local/src/WaltonChain_Geth_Src/geth_bin/`  
 `# tail -f geth.log`
 
 ### 13. Stop geth
-`# cd /usr/local/src/WaltonChain_Gwtc_Src/geth_bin/`  
+`# cd /usr/local/src/WaltonChain_Geth_Src/geth_bin/`  
 `# ./stop.sh` 
 
 

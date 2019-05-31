@@ -13,9 +13,9 @@ PageEx license
 PageExEnd
 
 # Install geth binary
-Section "Gwtc" GETH_IDX
+Section "Geth" GETH_IDX
   SetOutPath $INSTDIR
-  file {{.Gwtc}}
+  file {{.Geth}}
 
   # Create start menu launcher
   createDirectory "$SMPROGRAMS\${APPNAME}"
@@ -24,14 +24,14 @@ Section "Gwtc" GETH_IDX
   createShortCut "$SMPROGRAMS\${APPNAME}\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "" ""
 
   # Firewall - remove rules (if exists)
-  SimpleFC::AdvRemoveRule "Gwtc incoming peers (TCP:10101)"
-  SimpleFC::AdvRemoveRule "Gwtc outgoing peers (TCP:10101)"
-  SimpleFC::AdvRemoveRule "Gwtc UDP discovery (UDP:10101)"
+  SimpleFC::AdvRemoveRule "Geth incoming peers (TCP:10101)"
+  SimpleFC::AdvRemoveRule "Geth outgoing peers (TCP:10101)"
+  SimpleFC::AdvRemoveRule "Geth UDP discovery (UDP:10101)"
 
   # Firewall - add rules
-  SimpleFC::AdvAddRule "Gwtc incoming peers (TCP:10101)" ""  6 1 1 2147483647 1 "$INSTDIR\geth.exe" "" "" "Wtc" 10101 "" "" ""
-  SimpleFC::AdvAddRule "Gwtc outgoing peers (TCP:10101)" ""  6 2 1 2147483647 1 "$INSTDIR\geth.exe" "" "" "Wtc" "" 10101 "" ""
-  SimpleFC::AdvAddRule "Gwtc UDP discovery (UDP:10101)" "" 17 2 1 2147483647 1 "$INSTDIR\geth.exe" "" "" "Wtc" "" 10101 "" ""
+  SimpleFC::AdvAddRule "Geth incoming peers (TCP:10101)" ""  6 1 1 2147483647 1 "$INSTDIR\geth.exe" "" "" "Wtc" 10101 "" "" ""
+  SimpleFC::AdvAddRule "Geth outgoing peers (TCP:10101)" ""  6 2 1 2147483647 1 "$INSTDIR\geth.exe" "" "" "Wtc" "" 10101 "" ""
+  SimpleFC::AdvAddRule "Geth UDP discovery (UDP:10101)" "" 17 2 1 2147483647 1 "$INSTDIR\geth.exe" "" "" "Wtc" "" 10101 "" ""
 
   # Set default IPC endpoint (https://github.com/ethereum/EIPs/issues/147)
   ${EnvVarUpdate} $0 "WTC_SOCKET" "R" "HKLM" "\\.\pipe\geth.ipc"

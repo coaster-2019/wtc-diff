@@ -680,7 +680,7 @@ func doWindowsInstaller(cmdline []string) {
 	// first section contains the geth binary, second section holds the dev tools.
 	templateData := map[string]interface{}{
 		"License":  "COPYING",
-		"Gwtc":     gethTool,
+		"Geth":     gethTool,
 		"DevTools": devTools,
 	}
 	build.Render("build/nsis.geth.nsi", filepath.Join(*workdir, "geth.nsi"), 0644, nil)
@@ -882,8 +882,8 @@ func doXCodeFramework(cmdline []string) {
 	// Prepare and upload a PodSpec to CocoaPods
 	if *deploy != "" {
 		meta := newPodMetadata(env, archive)
-		build.Render("build/pod.podspec", "Gwtc.podspec", 0755, meta)
-		build.MustRunCommand("pod", *deploy, "push", "Gwtc.podspec", "--allow-warnings", "--verbose")
+		build.Render("build/pod.podspec", "Geth.podspec", 0755, meta)
+		build.MustRunCommand("pod", *deploy, "push", "Geth.podspec", "--allow-warnings", "--verbose")
 	}
 }
 

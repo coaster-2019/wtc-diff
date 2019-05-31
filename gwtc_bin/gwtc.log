@@ -171,7 +171,7 @@ INFO [05-30|16:08:05] Update data from other nodes             blocks=1    txs=1
 INFO [05-30|16:08:53] Update data from other nodes             blocks=1    txs=0   blockheight=99618 hash=a444e6…3b29d4
 INFO [05-30|16:08:58] Update data from other nodes             blocks=1    txs=1   blockheight=99619 hash=c88a63…a0566b
 INFO [05-30|16:09:37] Update data from other nodes             blocks=1    txs=1   blockheight=99620 hash=06c1ab…e66820
-WARN [05-30|16:09:46] Failed to rotate local tx journal        err="open /home/odic/work/src/github.com/WaltonChain_Gwtc_Src/geth_bin/data/geth/transactions.rlp.new: no such file or directory"
+WARN [05-30|16:09:46] Failed to rotate local tx journal        err="open /home/odic/work/src/github.com/WaltonChain_Geth_Src/geth_bin/data/geth/transactions.rlp.new: no such file or directory"
 INFO [05-30|16:09:46] Update data from other nodes             blocks=1    txs=2   blockheight=99621 hash=4c5fd3…00e8dd
 INFO [05-30|16:10:12] Update data from other nodes             blocks=1    txs=0   blockheight=99622 hash=5626d2…471241
 INFO [05-30|16:10:16] Update data from other nodes             blocks=1    txs=1   blockheight=99623 hash=eb2c48…1bc4db
@@ -2287,7 +2287,7 @@ Error: invalid merkle root (remote: a84bd01597f26132d2bd2b2faef695b0866b87f1b9bf
 ##############################
  
 WARN [05-30|17:09:29] Synchronisation failed, dropping peer    peer=852f1860a8522dfc err="retrieved hash chain is invalid"
-WARN [05-30|17:09:46] Failed to rotate local tx journal        err="open /home/odic/work/src/github.com/WaltonChain_Gwtc_Src/geth_bin/data/geth/transactions.rlp.new: no such file or directory"
+WARN [05-30|17:09:46] Failed to rotate local tx journal        err="open /home/odic/work/src/github.com/WaltonChain_Geth_Src/geth_bin/data/geth/transactions.rlp.new: no such file or directory"
 ERROR[05-30|17:09:49] 
 ########## BAD BLOCK #########
 Chain config: {ChainID: 15}
@@ -5504,7 +5504,7 @@ Error: invalid merkle root (remote: a84bd01597f26132d2bd2b2faef695b0866b87f1b9bf
 ##############################
  
 WARN [05-30|18:09:38] Synchronisation failed, dropping peer    peer=1299e15d06fa2b93 err="retrieved hash chain is invalid"
-WARN [05-30|18:09:46] Failed to rotate local tx journal        err="open /home/odic/work/src/github.com/WaltonChain_Gwtc_Src/geth_bin/data/geth/transactions.rlp.new: no such file or directory"
+WARN [05-30|18:09:46] Failed to rotate local tx journal        err="open /home/odic/work/src/github.com/WaltonChain_Geth_Src/geth_bin/data/geth/transactions.rlp.new: no such file or directory"
 ERROR[05-30|18:09:49] 
 ########## BAD BLOCK #########
 Chain config: {ChainID: 15}

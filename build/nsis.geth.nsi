@@ -30,7 +30,7 @@
 CRCCheck on
 
 !define GROUPNAME "Wtc"
-!define APPNAME "Gwtc"
+!define APPNAME "Geth"
 !define DESCRIPTION "Official Go implementation of the Wtc protocol"
 !addplugindir .\
 

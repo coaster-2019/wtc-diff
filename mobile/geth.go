@@ -37,7 +37,7 @@ import (
 	whisper "github.com/ethereum/go-ethereum/whisper/whisperv5"
 )
 
-// NodeConfig represents the collection of configuration values to fine tune the Gwtc
+// NodeConfig represents the collection of configuration values to fine tune the Geth
 // node embedded into a mobile process. The available values are a subset of the
 // entire API provided by go-ethereum to reduce the maintenance surface and dev
 // complexity.
@@ -90,12 +90,12 @@ func NewNodeConfig() *NodeConfig {
 	return &config
 }
 
-// Node represents a Gwtc Wtc node instance.
+// Node represents a Geth Wtc node instance.
 type Node struct {
 	node *node.Node
 }
 
-// NewNode creates and configures a new Gwtc node.
+// NewNode creates and configures a new Geth node.
 func NewNode(datadir string, config *NodeConfig) (stack *Node, _ error) {
 	// If no or partial configurations were specified, use defaults
 	if config == nil {

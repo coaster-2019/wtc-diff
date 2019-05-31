@@ -46,7 +46,7 @@ const (
 var (
 	// Git SHA1 commit hash of the release (set via linker flags)
 	gitCommit = ""
-	// Wtc address of the Gwtc release oracle.
+	// Wtc address of the Geth release oracle.
 	relOracle = common.HexToAddress("0xfa7b9770ca4cb04296cac84f37736d4041251cdf")
 	// The app that holds all commands and flags.
 	app = utils.NewApp(gitCommit, "the go-ethereum command line interface")
@@ -140,7 +140,7 @@ var (
 )
 
 func init() {
-	// Initialize the CLI app and start Gwtc
+	// Initialize the CLI app and start Geth
 	app.Action = geth
 	app.HideVersion = true // we have a command to print the version
 	app.Copyright = "Copyright 2018-2019 The walton Authors"
