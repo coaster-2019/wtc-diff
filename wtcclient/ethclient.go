@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-// Package wtcclient provides a client for the Wtc RPC API.
+// Package wtcclient provides a client for the Ethereum RPC API.
 package wtcclient
 
 import (
@@ -32,7 +32,7 @@ import (
 	"github.com/ethereum/go-ethereum/rpc"
 )
 
-// Client defines typed wrappers for the Wtc RPC API.
+// Client defines typed wrappers for the Ethereum RPC API.
 type Client struct {
 	c *rpc.Client
 }

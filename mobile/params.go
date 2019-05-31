@@ -26,13 +26,13 @@ import (
 	"github.com/ethereum/go-ethereum/params"
 )
 
-// MainnetGenesis returns the JSON spec to use for the main Wtc network. It
+// MainnetGenesis returns the JSON spec to use for the main Ethereum network. It
 // is actually empty since that defaults to the hard coded binary genesis block.
 func MainnetGenesis() string {
 	return ""
 }
 
-// TestnetGenesis returns the JSON spec to use for the Wtc test network.
+// TestnetGenesis returns the JSON spec to use for the Ethereum test network.
 func TestnetGenesis() string {
 	enc, err := json.Marshal(core.DefaultTestnetGenesisBlock())
 	if err != nil {

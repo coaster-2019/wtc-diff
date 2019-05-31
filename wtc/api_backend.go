@@ -38,7 +38,7 @@ import (
 
 // EthApiBackend implements ethapi.Backend for full nodes
 type EthApiBackend struct {
-	eth *Wtc
+	eth *Ethereum
 	gpo *gasprice.Oracle
 }
 

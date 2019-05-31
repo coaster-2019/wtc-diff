@@ -67,7 +67,7 @@ var (
 	}
 
 	// AllProtocolChanges contains every protocol change (EIPs)
-	// introduced and accepted by the Wtc core developers.
+	// introduced and accepted by the Ethereum core developers.
 	//
 	// This configuration is intentionally not using keyed fields.
 	// This configuration must *always* have all forks enabled, which

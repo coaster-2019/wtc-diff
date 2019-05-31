@@ -41,7 +41,7 @@ const releaseRecheckInterval = time.Hour
 
 // Config contains the configurations of the release service.
 type Config struct {
-	Oracle common.Address // Wtc address of the release oracle
+	Oracle common.Address // Ethereum address of the release oracle
 	Major  uint32         // Major version component of the release
 	Minor  uint32         // Minor version component of the release
 	Patch  uint32         // Patch version component of the release
@@ -60,13 +60,13 @@ type ReleaseService struct {
 // NewReleaseService creates a new service to periodically check for new client
 // releases and notify the user of such.
 func NewReleaseService(ctx *node.ServiceContext, config Config) (node.Service, error) {
-	// Retrieve the Wtc service dependency to access the blockchain
+	// Retrieve the Ethereum service dependency to access the blockchain
 	var apiBackend ethapi.Backend
-	var wtc *eth.Wtc
+	var wtc *eth.Ethereum
 	if err := ctx.Service(&wtc); err == nil {
 		apiBackend = ethereum.ApiBackend
 	} else {
-		var wtc *les.LightWtc
+		var wtc *les.LightEthereum
 		if err := ctx.Service(&wtc); err == nil {
 			apiBackend = ethereum.ApiBackend
 		} else {

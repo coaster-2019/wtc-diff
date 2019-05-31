@@ -49,26 +49,26 @@ type NodeConfig struct {
 	// set to zero, then only the configured static and trusted peers can connect.
 	MaxPeers int
 
-	// WtcEnabled specifies whether the node should run the Wtc protocol.
-	WtcEnabled bool
+	// EthereumEnabled specifies whether the node should run the Ethereum protocol.
+	EthereumEnabled bool
 
-	// WtcNetworkID is the network identifier used by the Wtc protocol to
+	// EthereumNetworkID is the network identifier used by the Ethereum protocol to
 	// decide if remote peers should be accepted or not.
-	WtcNetworkID int64 // uint64 in truth, but Java can't handle that...
+	EthereumNetworkID int64 // uint64 in truth, but Java can't handle that...
 
-	// WtcGenesis is the genesis JSON to use to seed the blockchain with. An
+	// EthereumGenesis is the genesis JSON to use to seed the blockchain with. An
 	// empty genesis state is equivalent to using the mainnet's state.
-	WtcGenesis string
+	EthereumGenesis string
 
-	// WtcDatabaseCache is the system memory in MB to allocate for database caching.
+	// EthereumDatabaseCache is the system memory in MB to allocate for database caching.
 	// A minimum of 16MB is always reserved.
-	WtcDatabaseCache int
+	EthereumDatabaseCache int
 
-	// WtcNetStats is a netstats connection string to use to report various
+	// EthereumNetStats is a netstats connection string to use to report various
 	// chain, transaction and node stats to a monitoring server.
 	//
 	// It has the form "nodename:secret@host:port"
-	WtcNetStats string
+	EthereumNetStats string
 
 	// WhisperEnabled specifies whether the node should run the Whisper protocol.
 	WhisperEnabled bool
@@ -79,9 +79,9 @@ type NodeConfig struct {
 var defaultNodeConfig = &NodeConfig{
 	BootstrapNodes:        FoundationBootnodes(),
 	MaxPeers:              25,
-	WtcEnabled:       true,
-	WtcNetworkID:     1,
-	WtcDatabaseCache: 16,
+	EthereumEnabled:       true,
+	EthereumNetworkID:     1,
+	EthereumDatabaseCache: 16,
 }
 
 // NewNodeConfig creates a new node option set, initialized to the default values.
@@ -90,7 +90,7 @@ func NewNodeConfig() *NodeConfig {
 	return &config
 }
 
-// Node represents a Geth Wtc node instance.
+// Node represents a Geth Ethereum node instance.
 type Node struct {
 	node *node.Node
 }
@@ -129,39 +129,39 @@ func NewNode(datadir string, config *NodeConfig) (stack *Node, _ error) {
 	}
 
 	var genesis *core.Genesis
-	if config.WtcGenesis != "" {
+	if config.EthereumGenesis != "" {
 		// Parse the user supplied genesis spec if not mainnet
 		genesis = new(core.Genesis)
-		if err := json.Unmarshal([]byte(config.WtcGenesis), genesis); err != nil {
+		if err := json.Unmarshal([]byte(config.EthereumGenesis), genesis); err != nil {
 			return nil, fmt.Errorf("invalid genesis spec: %v", err)
 		}
 		// If we have the testnet, hard code the chain configs too
-		if config.WtcGenesis == TestnetGenesis() {
+		if config.EthereumGenesis == TestnetGenesis() {
 			genesis.Config = params.TestnetChainConfig
-			if config.WtcNetworkID == 1 {
-				config.WtcNetworkID = 3
+			if config.EthereumNetworkID == 1 {
+				config.EthereumNetworkID = 3
 			}
 		}
 	}
-	// Register the Wtc protocol if requested
-	if config.WtcEnabled {
+	// Register the Ethereum protocol if requested
+	if config.EthereumEnabled {
 		ethConf := eth.DefaultConfig
 		ethConf.Genesis = genesis
 		ethConf.SyncMode = downloader.LightSync
-		ethConf.NetworkId = uint64(config.WtcNetworkID)
-		ethConf.DatabaseCache = config.WtcDatabaseCache
+		ethConf.NetworkId = uint64(config.EthereumNetworkID)
+		ethConf.DatabaseCache = config.EthereumDatabaseCache
 		if err := rawStack.Register(func(ctx *node.ServiceContext) (node.Service, error) {
 			return les.New(ctx, &ethConf)
 		}); err != nil {
 			return nil, fmt.Errorf("wtc init: %v", err)
 		}
 		// If netstats reporting is requested, do it
-		if config.WtcNetStats != "" {
+		if config.EthereumNetStats != "" {
 			if err := rawStack.Register(func(ctx *node.ServiceContext) (node.Service, error) {
-				var lesServ *les.LightWtc
+				var lesServ *les.LightEthereum
 				ctx.Service(&lesServ)
 
-				return ethstats.New(config.WtcNetStats, nil, lesServ)
+				return ethstats.New(config.EthereumNetStats, nil, lesServ)
 			}); err != nil {
 				return nil, fmt.Errorf("netstats init: %v", err)
 			}
@@ -189,13 +189,13 @@ func (n *Node) Stop() error {
 	return n.node.Stop()
 }
 
-// GetWtcClient retrieves a client to access the Wtc subsystem.
-func (n *Node) GetWtcClient() (client *WtcClient, _ error) {
+// GetEthereumClient retrieves a client to access the Ethereum subsystem.
+func (n *Node) GetEthereumClient() (client *EthereumClient, _ error) {
 	rpc, err := n.node.Attach()
 	if err != nil {
 		return nil, err
 	}
-	return &WtcClient{wtcclient.NewClient(rpc)}, nil
+	return &EthereumClient{wtcclient.NewClient(rpc)}, nil
 }
 
 // GetNodeInfo gathers and returns a collection of metadata known about the host.

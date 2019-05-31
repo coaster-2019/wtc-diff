@@ -30,7 +30,7 @@ import (
 func main() {
 	app := cli.NewApp()
 	app.Name = "puppeth"
-	app.Usage = "assemble and maintain private Wtc networks"
+	app.Usage = "assemble and maintain private Ethereum networks"
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:  "network",

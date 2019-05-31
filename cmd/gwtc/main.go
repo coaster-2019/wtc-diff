@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
 
-// geth is the official command-line client for Wtc.
+// geth is the official command-line client for Ethereum.
 package main
 
 import (
@@ -46,7 +46,7 @@ const (
 var (
 	// Git SHA1 commit hash of the release (set via linker flags)
 	gitCommit = ""
-	// Wtc address of the Geth release oracle.
+	// Ethereum address of the Geth release oracle.
 	relOracle = common.HexToAddress("0xfa7b9770ca4cb04296cac84f37736d4041251cdf")
 	// The app that holds all commands and flags.
 	app = utils.NewApp(gitCommit, "the go-ethereum command line interface")
@@ -273,8 +273,8 @@ func startNode(ctx *cli.Context, stack *node.Node) {
 	}()
 	// Start auxiliary services if enabled
 	if ctx.GlobalBool(utils.MiningEnabledFlag.Name) {
-		// Mining only makes sense if a full Wtc node is running
-		var wtc *eth.Wtc
+		// Mining only makes sense if a full Ethereum node is running
+		var wtc *eth.Ethereum
 		if err := stack.Service(&wtc); err != nil {
 			utils.Fatalf("wtc service not running: %v", err)
 		}

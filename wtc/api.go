@@ -45,41 +45,41 @@ import (
 
 const defaultTraceTimeout = 5 * time.Second
 
-// PublicWtcAPI provides an API to access Wtc full node-related
+// PublicEthereumAPI provides an API to access Ethereum full node-related
 // information.
-type PublicWtcAPI struct {
-	e *Wtc
+type PublicEthereumAPI struct {
+	e *Ethereum
 }
 
-// NewPublicWtcAPI creates a new Wtc protocol API for full nodes.
-func NewPublicWtcAPI(e *Wtc) *PublicWtcAPI {
-	return &PublicWtcAPI{e}
+// NewPublicEthereumAPI creates a new Ethereum protocol API for full nodes.
+func NewPublicEthereumAPI(e *Ethereum) *PublicEthereumAPI {
+	return &PublicEthereumAPI{e}
 }
 
 // Etherbase is the address that mining rewards will be send to
-func (api *PublicWtcAPI) Etherbase() (common.Address, error) {
+func (api *PublicEthereumAPI) Etherbase() (common.Address, error) {
 	return api.e.Etherbase()
 }
 
 // Coinbase is the address that mining rewards will be send to (alias for Etherbase)
-func (api *PublicWtcAPI) Coinbase() (common.Address, error) {
+func (api *PublicEthereumAPI) Coinbase() (common.Address, error) {
 	return api.Etherbase()
 }
 
 // Hashrate returns the POW hashrate
-func (api *PublicWtcAPI) Hashrate() hexutil.Uint64 {
+func (api *PublicEthereumAPI) Hashrate() hexutil.Uint64 {
 	return hexutil.Uint64(api.e.Miner().HashRate())
 }
 
 // PublicMinerAPI provides an API to control the miner.
 // It offers only methods that operate on data that pose no security risk when it is publicly accessible.
 type PublicMinerAPI struct {
-	e     *Wtc
+	e     *Ethereum
 	agent *miner.RemoteAgent
 }
 
 // NewPublicMinerAPI create a new PublicMinerAPI instance.
-func NewPublicMinerAPI(e *Wtc) *PublicMinerAPI {
+func NewPublicMinerAPI(e *Ethereum) *PublicMinerAPI {
 	agent := miner.NewRemoteAgent(e.BlockChain(), e.Engine())
 	e.Miner().Register(agent)
 
@@ -125,11 +125,11 @@ func (api *PublicMinerAPI) SubmitHashrate(hashrate hexutil.Uint64, id common.Has
 // PrivateMinerAPI provides private RPC methods to control the miner.
 // These methods can be abused by external users and must be considered insecure for use by untrusted users.
 type PrivateMinerAPI struct {
-	e *Wtc
+	e *Ethereum
 }
 
 // NewPrivateMinerAPI create a new RPC service which controls the miner of this node.
-func NewPrivateMinerAPI(e *Wtc) *PrivateMinerAPI {
+func NewPrivateMinerAPI(e *Ethereum) *PrivateMinerAPI {
 	return &PrivateMinerAPI{e: e}
 }
 
@@ -205,15 +205,15 @@ func (api *PrivateMinerAPI) GetHashrate() uint64 {
 	return uint64(api.e.miner.HashRate())
 }
 
-// PrivateAdminAPI is the collection of Wtc full node-related APIs
+// PrivateAdminAPI is the collection of Ethereum full node-related APIs
 // exposed over the private admin endpoint.
 type PrivateAdminAPI struct {
-	eth *Wtc
+	eth *Ethereum
 }
 
 // NewPrivateAdminAPI creates a new API definition for the full node private
-// admin methods of the Wtc service.
-func NewPrivateAdminAPI(eth *Wtc) *PrivateAdminAPI {
+// admin methods of the Ethereum service.
+func NewPrivateAdminAPI(eth *Ethereum) *PrivateAdminAPI {
 	return &PrivateAdminAPI{eth: eth}
 }
 
@@ -298,15 +298,15 @@ func (api *PrivateAdminAPI) ImportChain(file string) (bool, error) {
 	return true, nil
 }
 
-// PublicDebugAPI is the collection of Wtc full node APIs exposed
+// PublicDebugAPI is the collection of Ethereum full node APIs exposed
 // over the public debugging endpoint.
 type PublicDebugAPI struct {
-	eth *Wtc
+	eth *Ethereum
 }
 
 // NewPublicDebugAPI creates a new API definition for the full node-
-// related public debug methods of the Wtc service.
-func NewPublicDebugAPI(eth *Wtc) *PublicDebugAPI {
+// related public debug methods of the Ethereum service.
+func NewPublicDebugAPI(eth *Ethereum) *PublicDebugAPI {
 	return &PublicDebugAPI{eth: eth}
 }
 
@@ -335,16 +335,16 @@ func (api *PublicDebugAPI) DumpBlock(blockNr rpc.BlockNumber) (state.Dump, error
 	return stateDb.RawDump(), nil
 }
 
-// PrivateDebugAPI is the collection of Wtc full node APIs exposed over
+// PrivateDebugAPI is the collection of Ethereum full node APIs exposed over
 // the private debugging endpoint.
 type PrivateDebugAPI struct {
 	config *params.ChainConfig
-	eth    *Wtc
+	eth    *Ethereum
 }
 
 // NewPrivateDebugAPI creates a new API definition for the full node-related
-// private debug methods of the Wtc service.
-func NewPrivateDebugAPI(config *params.ChainConfig, eth *Wtc) *PrivateDebugAPI {
+// private debug methods of the Ethereum service.
+func NewPrivateDebugAPI(config *params.ChainConfig, eth *Ethereum) *PrivateDebugAPI {
 	return &PrivateDebugAPI{config: config, eth: eth}
 }
 

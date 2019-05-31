@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-// Package les implements the Light Wtc Subprotocol.
+// Package les implements the Light Ethereum Subprotocol.
 package les
 
 import (
@@ -44,7 +44,7 @@ import (
 	rpc "github.com/ethereum/go-ethereum/rpc"
 )
 
-type LightWtc struct {
+type LightEthereum struct {
 	odr         *LesOdr
 	relay       *LesTxRelay
 	chainConfig *params.ChainConfig
@@ -73,7 +73,7 @@ type LightWtc struct {
 	wg sync.WaitGroup
 }
 
-func New(ctx *node.ServiceContext, config *eth.Config) (*LightWtc, error) {
+func New(ctx *node.ServiceContext, config *eth.Config) (*LightEthereum, error) {
 	chainDb, err := eth.CreateDB(ctx, config, "lightchaindata")
 	if err != nil {
 		return nil, err
@@ -87,7 +87,7 @@ func New(ctx *node.ServiceContext, config *eth.Config) (*LightWtc, error) {
 	peers := newPeerSet()
 	quitSync := make(chan struct{})
 
-	eth := &LightWtc{
+	eth := &LightEthereum{
 		chainConfig:    chainConfig,
 		chainDb:        chainDb,
 		eventMux:       ctx.EventMux,
@@ -154,7 +154,7 @@ func (s *LightDummyAPI) Mining() bool {
 
 // APIs returns the collection of RPC services the wtc package offers.
 // NOTE, some of these services probably need to be moved to somewhere else.
-func (s *LightWtc) APIs() []rpc.API {
+func (s *LightEthereum) APIs() []rpc.API {
 	return append(ethapi.GetAPIs(s.ApiBackend), []rpc.API{
 		{
 			Namespace: "eth",
@@ -180,26 +180,26 @@ func (s *LightWtc) APIs() []rpc.API {
 	}...)
 }
 
-func (s *LightWtc) ResetWithGenesisBlock(gb *types.Block) {
+func (s *LightEthereum) ResetWithGenesisBlock(gb *types.Block) {
 	s.blockchain.ResetWithGenesisBlock(gb)
 }
 
-func (s *LightWtc) BlockChain() *light.LightChain      { return s.blockchain }
-func (s *LightWtc) TxPool() *light.TxPool              { return s.txPool }
-func (s *LightWtc) Engine() consensus.Engine           { return s.engine }
-func (s *LightWtc) LesVersion() int                    { return int(s.protocolManager.SubProtocols[0].Version) }
-func (s *LightWtc) Downloader() *downloader.Downloader { return s.protocolManager.downloader }
-func (s *LightWtc) EventMux() *event.TypeMux           { return s.eventMux }
+func (s *LightEthereum) BlockChain() *light.LightChain      { return s.blockchain }
+func (s *LightEthereum) TxPool() *light.TxPool              { return s.txPool }
+func (s *LightEthereum) Engine() consensus.Engine           { return s.engine }
+func (s *LightEthereum) LesVersion() int                    { return int(s.protocolManager.SubProtocols[0].Version) }
+func (s *LightEthereum) Downloader() *downloader.Downloader { return s.protocolManager.downloader }
+func (s *LightEthereum) EventMux() *event.TypeMux           { return s.eventMux }
 
 // Protocols implements node.Service, returning all the currently configured
 // network protocols to start.
-func (s *LightWtc) Protocols() []p2p.Protocol {
+func (s *LightEthereum) Protocols() []p2p.Protocol {
 	return s.protocolManager.SubProtocols
 }
 
 // Start implements node.Service, starting all internal goroutines needed by the
-// Wtc protocol implementation.
-func (s *LightWtc) Start(srvr *p2p.Server) error {
+// Ethereum protocol implementation.
+func (s *LightEthereum) Start(srvr *p2p.Server) error {
 	log.Warn("Light client mode is an experimental feature")
 	s.netRPCService = ethapi.NewPublicNetAPI(srvr, s.networkId)
 	s.serverPool.start(srvr, lesTopic(s.blockchain.Genesis().Hash()))
@@ -208,8 +208,8 @@ func (s *LightWtc) Start(srvr *p2p.Server) error {
 }
 
 // Stop implements node.Service, terminating all internal goroutines used by the
-// Wtc protocol.
-func (s *LightWtc) Stop() error {
+// Ethereum protocol.
+func (s *LightEthereum) Stop() error {
 	s.odr.Stop()
 	s.blockchain.Stop()
 	s.protocolManager.Stop()
