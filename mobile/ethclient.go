@@ -27,12 +27,12 @@ import (
 
 // EthereumClient provides access to the Ethereum APIs.
 type EthereumClient struct {
-	client *ethereumclient.Client
+	client *ethclient.Client
 }
 
 // NewEthereumClient connects a client to the given URL.
 func NewEthereumClient(rawurl string) (client *EthereumClient, _ error) {
-	rawClient, err := ethereumclient.Dial(rawurl)
+	rawClient, err := ethclient.Dial(rawurl)
 	return &EthereumClient{rawClient}, err
 }
 
