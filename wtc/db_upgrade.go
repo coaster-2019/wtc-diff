@@ -1,12 +1,12 @@
 // Copyright 2016 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-wtc library is free software: you can redistribute it and/or modify
+// The go-ethereum library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-wtc library is distributed in the hope that it will be useful,
+// The go-ethereum library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -14,18 +14,18 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-// Package eth implements the Wtc protocol.
+// Package eth implements the Ethereum protocol.
 package eth
 
 import (
 	"bytes"
 	"time"
 
-	"github.com/wtc/go-wtc/common"
-	"github.com/wtc/go-wtc/core"
-	"github.com/wtc/go-wtc/wtcdb"
-	"github.com/wtc/go-wtc/log"
-	"github.com/wtc/go-wtc/rlp"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/ethdb"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/rlp"
 )
 
 var deduplicateData = []byte("dbUpgrade_20170714deduplicateData")
@@ -34,7 +34,7 @@ var deduplicateData = []byte("dbUpgrade_20170714deduplicateData")
 // starts a background process to make upgrades if necessary.
 // Returns a stop function that blocks until the process has
 // been safely stopped.
-func upgradeDeduplicateData(db wtcdb.Database) func() error {
+func upgradeDeduplicateData(db ethdb.Database) func() error {
 	// If the database is already converted or empty, bail out
 	data, _ := db.Get(deduplicateData)
 	if len(data) > 0 && data[0] == 42 {
@@ -50,7 +50,7 @@ func upgradeDeduplicateData(db wtcdb.Database) func() error {
 
 	go func() {
 		// Create an iterator to read the entire database and covert old lookup entires
-		it := db.(*wtcdb.LDBDatabase).NewIterator()
+		it := db.(*ethdb.LDBDatabase).NewIterator()
 		defer func() {
 			if it != nil {
 				it.Release()
@@ -100,7 +100,7 @@ func upgradeDeduplicateData(db wtcdb.Database) func() error {
 			converted++
 			if converted%100000 == 0 {
 				it.Release()
-				it = db.(*wtcdb.LDBDatabase).NewIterator()
+				it = db.(*ethdb.LDBDatabase).NewIterator()
 				it.Seek(key)
 
 				log.Info("Deduplicating database entries", "deduped", converted)

@@ -7,7 +7,7 @@ import (
 	"encoding/hex"
 	"testing"
 
-	"github.com/wtc/go-wtc/crypto/x11/nist"
+	"github.com/ethereum/go-ethereum/crypto/x11/nist"
 )
 
 ////////////////

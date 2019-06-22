@@ -1,12 +1,12 @@
 // Copyright 2016 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-wtc library is free software: you can redistribute it and/or modify
+// The go-ethereum library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-wtc library is distributed in the hope that it will be useful,
+// The go-ethereum library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -23,22 +23,22 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/wtc/go-wtc/accounts/abi/bind"
-	"github.com/wtc/go-wtc/common"
-	"github.com/wtc/go-wtc/contracts/chequebook"
-	"github.com/wtc/go-wtc/contracts/ens"
-	"github.com/wtc/go-wtc/crypto"
-	"github.com/wtc/go-wtc/wtcclient"
-	"github.com/wtc/go-wtc/log"
-	"github.com/wtc/go-wtc/node"
-	"github.com/wtc/go-wtc/p2p"
-	"github.com/wtc/go-wtc/p2p/discover"
-	"github.com/wtc/go-wtc/rpc"
-	"github.com/wtc/go-wtc/swarm/api"
-	httpapi "github.com/wtc/go-wtc/swarm/api/http"
-	"github.com/wtc/go-wtc/swarm/fuse"
-	"github.com/wtc/go-wtc/swarm/network"
-	"github.com/wtc/go-wtc/swarm/storage"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/contracts/chequebook"
+	"github.com/ethereum/go-ethereum/contracts/ens"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/node"
+	"github.com/ethereum/go-ethereum/p2p"
+	"github.com/ethereum/go-ethereum/p2p/discover"
+	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/ethereum/go-ethereum/swarm/api"
+	httpapi "github.com/ethereum/go-ethereum/swarm/api/http"
+	"github.com/ethereum/go-ethereum/swarm/fuse"
+	"github.com/ethereum/go-ethereum/swarm/network"
+	"github.com/ethereum/go-ethereum/swarm/storage"
 )
 
 // the swarm stack
@@ -76,7 +76,7 @@ func (self *Swarm) API() *SwarmAPI {
 
 // creates a new swarm service instance
 // implements node.Service
-func NewSwarm(ctx *node.ServiceContext, backend chequebook.Backend, ensClient *wtcclient.Client, config *api.Config, swapEnabled, syncEnabled bool, cors string) (self *Swarm, err error) {
+func NewSwarm(ctx *node.ServiceContext, backend chequebook.Backend, ensClient *ethclient.Client, config *api.Config, swapEnabled, syncEnabled bool, cors string) (self *Swarm, err error) {
 	if bytes.Equal(common.FromHex(config.PublicKey), storage.ZeroKey) {
 		return nil, fmt.Errorf("empty public key")
 	}

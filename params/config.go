@@ -1,12 +1,12 @@
 // Copyright 2016 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-wtc library is free software: you can redistribute it and/or modify
+// The go-ethereum library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-wtc library is distributed in the hope that it will be useful,
+// The go-ethereum library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/wtc/go-wtc/common"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 var (									   
@@ -67,7 +67,7 @@ var (
 	}
 
 	// AllProtocolChanges contains every protocol change (EIPs)
-	// introduced and accepted by the Wtc core developers.
+	// introduced and accepted by the Ethereum core developers.
 	//
 	// This configuration is intentionally not using keyed fields.
 	// This configuration must *always* have all forks enabled, which
@@ -89,7 +89,7 @@ type ChainConfig struct {
 
 	HomesteadBlock *big.Int `json:"homesteadBlock,omitempty"` // Homestead switch block (nil = no fork, 0 = already homestead)
 
-	// EIP150 implements the Gas price changes (https://github.com/wtc/EIPs/issues/150)
+	// EIP150 implements the Gas price changes (https://github.com/ethereum/EIPs/issues/150)
 	EIP150Block *big.Int    `json:"eip150Block,omitempty"` // EIP150 HF block (nil = no fork)
 	EIP150Hash  common.Hash `json:"eip150Hash,omitempty"`  // EIP150 HF hash (fast sync aid)
 

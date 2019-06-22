@@ -1,12 +1,12 @@
 // Copyright 2016 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-wtc library is free software: you can redistribute it and/or modify
+// The go-ethereum library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-wtc library is distributed in the hope that it will be useful,
+// The go-ethereum library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-// Package les implements the Light Wtc Subprotocol.
+// Package les implements the Light Ethereum Subprotocol.
 package les
 
 import (
@@ -23,18 +23,18 @@ import (
 	"sync"
 	"time"
 
-	"github.com/wtc/go-wtc/common"
-	"github.com/wtc/go-wtc/core"
-	"github.com/wtc/go-wtc/core/types"
-	"github.com/wtc/go-wtc/wtc"
-	"github.com/wtc/go-wtc/wtcdb"
-	"github.com/wtc/go-wtc/les/flowcontrol"
-	"github.com/wtc/go-wtc/light"
-	"github.com/wtc/go-wtc/log"
-	"github.com/wtc/go-wtc/p2p"
-	"github.com/wtc/go-wtc/p2p/discv5"
-	"github.com/wtc/go-wtc/rlp"
-	"github.com/wtc/go-wtc/trie"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/eth"
+	"github.com/ethereum/go-ethereum/ethdb"
+	"github.com/ethereum/go-ethereum/les/flowcontrol"
+	"github.com/ethereum/go-ethereum/light"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/p2p"
+	"github.com/ethereum/go-ethereum/p2p/discv5"
+	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/ethereum/go-ethereum/trie"
 )
 
 type LesServer struct {
@@ -46,7 +46,7 @@ type LesServer struct {
 	quitSync        chan struct{}
 }
 
-func NewLesServer(eth *eth.Wtc, config *eth.Config) (*LesServer, error) {
+func NewLesServer(eth *eth.Ethereum, config *eth.Config) (*LesServer, error) {
 	quitSync := make(chan struct{})
 	pm, err := NewProtocolManager(eth.BlockChain().Config(), false, config.NetworkId, eth.EventMux(), eth.Engine(), newPeerSet(), eth.BlockChain(), eth.TxPool(), eth.ChainDb(), nil, nil, quitSync, new(sync.WaitGroup))
 	if err != nil {
@@ -179,7 +179,7 @@ func linRegFromBytes(data []byte) *linReg {
 
 type requestCostStats struct {
 	lock  sync.RWMutex
-	db    wtcdb.Database
+	db    ethdb.Database
 	stats map[uint64]*linReg
 }
 
@@ -190,7 +190,7 @@ type requestCostStatsRlp []struct {
 
 var rcStatsKey = []byte("_requestCostStats")
 
-func newCostStats(db wtcdb.Database) *requestCostStats {
+func newCostStats(db ethdb.Database) *requestCostStats {
 	stats := make(map[uint64]*linReg)
 	for _, code := range reqList {
 		stats[code] = &linReg{cnt: 100}
@@ -333,20 +333,20 @@ var (
 	chtPrefix  = []byte("cht")           // chtPrefix + chtNum (uint64 big endian) -> trie root hash
 )
 
-func getChtRoot(db wtcdb.Database, num uint64) common.Hash {
+func getChtRoot(db ethdb.Database, num uint64) common.Hash {
 	var encNumber [8]byte
 	binary.BigEndian.PutUint64(encNumber[:], num)
 	data, _ := db.Get(append(chtPrefix, encNumber[:]...))
 	return common.BytesToHash(data)
 }
 
-func storeChtRoot(db wtcdb.Database, num uint64, root common.Hash) {
+func storeChtRoot(db ethdb.Database, num uint64, root common.Hash) {
 	var encNumber [8]byte
 	binary.BigEndian.PutUint64(encNumber[:], num)
 	db.Put(append(chtPrefix, encNumber[:]...), root[:])
 }
 
-func makeCht(db wtcdb.Database) bool {
+func makeCht(db ethdb.Database) bool {
 	headHash := core.GetHeadBlockHash(db)
 	headNum := core.GetBlockNumber(db, headHash)
 

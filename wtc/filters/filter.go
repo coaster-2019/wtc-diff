@@ -1,12 +1,12 @@
 // Copyright 2014 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-wtc library is free software: you can redistribute it and/or modify
+// The go-ethereum library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-wtc library is distributed in the hope that it will be useful,
+// The go-ethereum library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -21,17 +21,17 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/wtc/go-wtc/common"
-	"github.com/wtc/go-wtc/core"
-	"github.com/wtc/go-wtc/core/bloombits"
-	"github.com/wtc/go-wtc/core/types"
-	"github.com/wtc/go-wtc/wtcdb"
-	"github.com/wtc/go-wtc/event"
-	"github.com/wtc/go-wtc/rpc"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/core/bloombits"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/ethdb"
+	"github.com/ethereum/go-ethereum/event"
+	"github.com/ethereum/go-ethereum/rpc"
 )
 
 type Backend interface {
-	ChainDb() wtcdb.Database
+	ChainDb() ethdb.Database
 	EventMux() *event.TypeMux
 	HeaderByNumber(ctx context.Context, blockNr rpc.BlockNumber) (*types.Header, error)
 	GetReceipts(ctx context.Context, blockHash common.Hash) (types.Receipts, error)
@@ -49,7 +49,7 @@ type Backend interface {
 type Filter struct {
 	backend Backend
 
-	db         wtcdb.Database
+	db         ethdb.Database
 	begin, end int64
 	addresses  []common.Address
 	topics     [][]common.Hash

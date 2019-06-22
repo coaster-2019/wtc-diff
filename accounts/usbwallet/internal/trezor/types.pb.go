@@ -42,9 +42,9 @@ It has these top-level messages:
 	GetPublicKey
 	PublicKey
 	GetAddress
-	WtcGetAddress
+	EthereumGetAddress
 	Address
-	WtcAddress
+	EthereumAddress
 	WipeDevice
 	LoadDevice
 	ResetDevice
@@ -69,12 +69,12 @@ It has these top-level messages:
 	SimpleSignTx
 	TxRequest
 	TxAck
-	WtcSignTx
-	WtcTxRequest
-	WtcTxAck
-	WtcSignMessage
-	WtcVerifyMessage
-	WtcMessageSignature
+	EthereumSignTx
+	EthereumTxRequest
+	EthereumTxAck
+	EthereumSignMessage
+	EthereumVerifyMessage
+	EthereumMessageSignature
 	SignIdentity
 	SignedIdentity
 	GetECDHSessionKey

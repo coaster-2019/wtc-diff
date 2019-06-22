@@ -1,12 +1,12 @@
 // Copyright 2014 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-wtc library is free software: you can redistribute it and/or modify
+// The go-ethereum library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-wtc library is distributed in the hope that it will be useful,
+// The go-ethereum library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -25,14 +25,14 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/wtc/go-wtc/accounts"
-	"github.com/wtc/go-wtc/accounts/keystore"
-	"github.com/wtc/go-wtc/accounts/usbwallet"
-	"github.com/wtc/go-wtc/common"
-	"github.com/wtc/go-wtc/crypto"
-	"github.com/wtc/go-wtc/log"
-	"github.com/wtc/go-wtc/p2p"
-	"github.com/wtc/go-wtc/p2p/discover"
+	"github.com/ethereum/go-ethereum/accounts"
+	"github.com/ethereum/go-ethereum/accounts/keystore"
+	"github.com/ethereum/go-ethereum/accounts/usbwallet"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/p2p"
+	"github.com/ethereum/go-ethereum/p2p/discover"
 )
 
 const (
@@ -48,7 +48,7 @@ const (
 // all registered services.
 type Config struct {
 	// Name sets the instance name of the node. It must not contain the / character and is
-	// used in the devp2p node identifier. The instance name of gwtc is "gwtc". If no
+	// used in the devp2p node identifier. The instance name of geth is "geth". If no
 	// value is specified, the basename of the current executable is used.
 	Name string `toml:"-"`
 
@@ -215,9 +215,9 @@ func DefaultWSEndpoint() string {
 // NodeName returns the devp2p node identifier.
 func (c *Config) NodeName() string {
 	name := c.name()
-	// Backwards compatibility: previous versions used title-cased "Gwtc", keep that.
-	if name == "gwtc" || name == "gwtc-testnet" {
-		name = "gwtc"
+	// Backwards compatibility: previous versions used title-cased "Geth", keep that.
+	if name == "geth" || name == "geth-testnet" {
+		name = "geth"
 	}
 	if c.UserIdent != "" {
 		name += "/" + c.UserIdent
@@ -241,8 +241,8 @@ func (c *Config) name() string {
 	return c.Name
 }
 
-// These resources are resolved differently for "gwtc" instances.
-var isOldGwtcResource = map[string]bool{
+// These resources are resolved differently for "geth" instances.
+var isOldGethResource = map[string]bool{
 	"chaindata":          true,
 	"nodes":              true,
 	"nodekey":            true,
@@ -259,10 +259,10 @@ func (c *Config) resolvePath(path string) string {
 		return ""
 	}
 	// Backwards-compatibility: ensure that data directory files created
-	// by gwtc 1.4 are used if they exist.
-	if c.name() == "gwtc" && isOldGwtcResource[path] {
+	// by geth 1.4 are used if they exist.
+	if c.name() == "geth" && isOldGethResource[path] {
 		oldpath := ""
-		if c.Name == "gwtc" {
+		if c.Name == "geth" {
 			oldpath = filepath.Join(c.DataDir, path)
 		}
 		if oldpath != "" && common.FileExist(oldpath) {
@@ -391,7 +391,7 @@ func makeAccountManager(conf *Config) (*accounts.Manager, string, error) {
 		keydir, err = filepath.Abs(conf.KeyStoreDir)
 	default:
 		// There is no datadir.
-		keydir, err = ioutil.TempDir("", "go-wtc-keystore")
+		keydir, err = ioutil.TempDir("", "go-ethereum-keystore")
 		ephemeral = keydir
 	}
 	if err != nil {

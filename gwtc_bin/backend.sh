@@ -1,9 +1,9 @@
 #!/bin/sh
 if [ ! -d "./data" ]; then
-	 ./bin/gwtc --datadir ./data/ init ./settings/wtc.json
+	 ./bin/geth --datadir ./data/ init ./settings/ethereum.json
 fi
 if [ "$1" = "--mine" ]; then
-	nohup ./bin/gwtc --networkid 15 --datadir ./data/ --identity "wtc" $1 --etherbase $2 > gwtc.log 2>&1 &
+	nohup ./bin/geth --networkid 15 --datadir ./data/ --identity "ethereum" $1 --etherbase $2 > geth.log 2>&1 &
 else
-	nohup ./bin/gwtc --networkid 15 --datadir ./data/ --identity "wtc" > gwtc.log 2>&1 &
+	nohup ./bin/geth --networkid 15 --datadir ./data/ --identity "ethereum" > geth.log 2>&1 &
 fi

@@ -1,12 +1,12 @@
 // Copyright 2016 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-wtc library is free software: you can redistribute it and/or modify
+// The go-ethereum library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-wtc library is distributed in the hope that it will be useful,
+// The go-ethereum library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -19,19 +19,19 @@ package les
 import (
 	"context"
 
-	"github.com/wtc/go-wtc/wtcdb"
-	"github.com/wtc/go-wtc/light"
-	"github.com/wtc/go-wtc/log"
+	"github.com/ethereum/go-ethereum/ethdb"
+	"github.com/ethereum/go-ethereum/light"
+	"github.com/ethereum/go-ethereum/log"
 )
 
 // LesOdr implements light.OdrBackend
 type LesOdr struct {
-	db        wtcdb.Database
+	db        ethdb.Database
 	stop      chan struct{}
 	retriever *retrieveManager
 }
 
-func NewLesOdr(db wtcdb.Database, retriever *retrieveManager) *LesOdr {
+func NewLesOdr(db ethdb.Database, retriever *retrieveManager) *LesOdr {
 	return &LesOdr{
 		db:        db,
 		retriever: retriever,
@@ -43,7 +43,7 @@ func (odr *LesOdr) Stop() {
 	close(odr.stop)
 }
 
-func (odr *LesOdr) Database() wtcdb.Database {
+func (odr *LesOdr) Database() ethdb.Database {
 	return odr.db
 }
 

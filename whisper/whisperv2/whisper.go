@@ -1,12 +1,12 @@
 // Copyright 2014 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-wtc library is free software: you can redistribute it and/or modify
+// The go-ethereum library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-wtc library is distributed in the hope that it will be useful,
+// The go-ethereum library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -22,13 +22,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/wtc/go-wtc/common"
-	"github.com/wtc/go-wtc/crypto"
-	"github.com/wtc/go-wtc/crypto/ecies"
-	"github.com/wtc/go-wtc/event/filter"
-	"github.com/wtc/go-wtc/log"
-	"github.com/wtc/go-wtc/p2p"
-	"github.com/wtc/go-wtc/rpc"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/crypto/ecies"
+	"github.com/ethereum/go-ethereum/event/filter"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/p2p"
+	"github.com/ethereum/go-ethereum/rpc"
 
 	"gopkg.in/fatih/set.v0"
 )
@@ -58,7 +58,7 @@ type MessageEvent struct {
 	Message *Message
 }
 
-// Whisper represents a dark communication interface through the Wtc
+// Whisper represents a dark communication interface through the Ethereum
 // network, using its very own P2P communication layer.
 type Whisper struct {
 	protocol p2p.Protocol
@@ -76,7 +76,7 @@ type Whisper struct {
 	quit chan struct{}
 }
 
-// New creates a Whisper client ready to communicate through the Wtc P2P
+// New creates a Whisper client ready to communicate through the Ethereum P2P
 // network.
 func New() *Whisper {
 	whisper := &Whisper{

@@ -1,18 +1,18 @@
 // Copyright 2017 The go-ethereum Authors
-// This file is part of go-wtc.
+// This file is part of go-ethereum.
 //
-// go-wtc is free software: you can redistribute it and/or modify
+// go-ethereum is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// go-wtc is distributed in the hope that it will be useful,
+// go-ethereum is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with go-wtc. If not, see <http://www.gnu.org/licenses/>.
+// along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
 
 package main
 
@@ -28,12 +28,12 @@ import (
 
 	cli "gopkg.in/urfave/cli.v1"
 
-	"github.com/wtc/go-wtc/cmd/utils"
-	"github.com/wtc/go-wtc/contracts/release"
-	"github.com/wtc/go-wtc/wtc"
-	"github.com/wtc/go-wtc/node"
-	"github.com/wtc/go-wtc/params"
-	whisper "github.com/wtc/go-wtc/whisper/whisperv5"
+	"github.com/ethereum/go-ethereum/cmd/utils"
+	"github.com/ethereum/go-ethereum/contracts/release"
+	"github.com/ethereum/go-ethereum/eth"
+	"github.com/ethereum/go-ethereum/node"
+	"github.com/ethereum/go-ethereum/params"
+	whisper "github.com/ethereum/go-ethereum/whisper/whisperv5"
 	"github.com/naoina/toml"
 )
 
@@ -75,14 +75,14 @@ type ethstatsConfig struct {
 	URL string `toml:",omitempty"`
 }
 
-type gwtcConfig struct {
+type gethConfig struct {
 	Eth      eth.Config
 	Shh      whisper.Config
 	Node     node.Config
 	Ethstats ethstatsConfig
 }
 
-func loadConfig(file string, cfg *gwtcConfig) error {
+func loadConfig(file string, cfg *gethConfig) error {
 	f, err := os.Open(file)
 	if err != nil {
 		return err
@@ -103,13 +103,13 @@ func defaultNodeConfig() node.Config {
 	cfg.Version = params.VersionWithCommit(gitCommit)
 	cfg.HTTPModules = append(cfg.HTTPModules, "eth", "shh")
 	cfg.WSModules = append(cfg.WSModules, "eth", "shh")
-	cfg.IPCPath = "gwtc.ipc"
+	cfg.IPCPath = "geth.ipc"
 	return cfg
 }
 
-func makeConfigNode(ctx *cli.Context) (*node.Node, gwtcConfig) {
+func makeConfigNode(ctx *cli.Context) (*node.Node, gethConfig) {
 	// Load defaults.
-	cfg := gwtcConfig{
+	cfg := gethConfig{
 		Eth:  eth.DefaultConfig,
 		Shh:  whisper.DefaultConfig,
 		Node: defaultNodeConfig(),
@@ -166,7 +166,7 @@ func makeFullNode(ctx *cli.Context) *node.Node {
 		utils.RegisterShhService(stack, &cfg.Shh)
 	}
 
-	// Add the Wtc Stats daemon if requested.
+	// Add the Ethereum Stats daemon if requested.
 	if cfg.Ethstats.URL != "" {
 		utils.RegisterEthStatsService(stack, cfg.Ethstats.URL)
 	}
@@ -183,7 +183,7 @@ func makeFullNode(ctx *cli.Context) *node.Node {
 		copy(config.Commit[:], commit)
 		return release.NewReleaseService(ctx, config)
 	}); err != nil {
-		utils.Fatalf("Failed to register the gwtc release oracle service: %v", err)
+		utils.Fatalf("Failed to register the geth release oracle service: %v", err)
 	}
 	return stack
 }

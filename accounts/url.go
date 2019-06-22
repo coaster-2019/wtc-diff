@@ -1,12 +1,12 @@
 // Copyright 2017 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-wtc library is free software: you can redistribute it and/or modify
+// The go-ethereum library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-wtc library is distributed in the hope that it will be useful,
+// The go-ethereum library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -33,7 +33,7 @@ import (
 // references to the original version, whereas the latter is important to ensure
 // one single canonical form opposed to many allowed ones by the RFC 3986 spec.
 //
-// As such, these URLs should not be used outside of the scope of an Wtc
+// As such, these URLs should not be used outside of the scope of an Ethereum
 // wallet or account.
 type URL struct {
 	Scheme string // Protocol scheme to identify a capable account backend

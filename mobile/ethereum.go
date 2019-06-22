@@ -1,12 +1,12 @@
 // Copyright 2016 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-wtc library is free software: you can redistribute it and/or modify
+// The go-ethereum library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-wtc library is distributed in the hope that it will be useful,
+// The go-ethereum library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -14,22 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-// Contains all the wrappers from the go-wtc root package.
+// Contains all the wrappers from the go-ethereum root package.
 
-package gwtc
+package geth
 
 import (
 	"errors"
 	"math/big"
 
-	wtc "github.com/wtc/go-wtc"
-	"github.com/wtc/go-wtc/common"
+	ethereum "github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 // Subscription represents an event subscription where events are
 // delivered on a data channel.
 type Subscription struct {
-	sub wtc.Subscription
+	sub ethereum.Subscription
 }
 
 // Unsubscribe cancels the sending of events to the data channel
@@ -40,7 +40,7 @@ func (s *Subscription) Unsubscribe() {
 
 // CallMsg contains parameters for contract calls.
 type CallMsg struct {
-	msg wtc.CallMsg
+	msg ethereum.CallMsg
 }
 
 // NewCallMsg creates an empty contract call parameter list.
@@ -73,9 +73,9 @@ func (msg *CallMsg) SetTo(address *Address) {
 }
 
 // SyncProgress gives progress indications when the node is synchronising with
-// the Wtc network.
+// the Ethereum network.
 type SyncProgress struct {
-	progress wtc.SyncProgress
+	progress ethereum.SyncProgress
 }
 
 func (p *SyncProgress) GetStartingBlock() int64 { return int64(p.progress.StartingBlock) }
@@ -128,7 +128,7 @@ func (t *Topics) Append(topics *Hashes) {
 
 // FilterQuery contains options for contact log filtering.
 type FilterQuery struct {
-	query wtc.FilterQuery
+	query ethereum.FilterQuery
 }
 
 // NewFilterQuery creates an empty filter query for contact log filtering.

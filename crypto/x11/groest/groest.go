@@ -6,7 +6,7 @@ package groest
 import (
 	"fmt"
 
-	"github.com/wtc/go-wtc/crypto/hash"
+	"github.com/ethereum/go-ethereum/crypto/hash"
 )
 
 // HashSize holds the size of a hash in bytes.

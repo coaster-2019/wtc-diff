@@ -1,18 +1,18 @@
 // Copyright 2017 The go-ethereum Authors
-// This file is part of go-wtc.
+// This file is part of go-ethereum.
 //
-// go-wtc is free software: you can redistribute it and/or modify
+// go-ethereum is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// go-wtc is distributed in the hope that it will be useful,
+// go-ethereum is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with go-wtc. If not, see <http://www.gnu.org/licenses/>.
+// along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
 
 // faucet is a Ether faucet backed by a light client.
 package main
@@ -38,23 +38,23 @@ import (
 	"sync"
 	"time"
 
-	"github.com/wtc/go-wtc/accounts"
-	"github.com/wtc/go-wtc/accounts/keystore"
-	"github.com/wtc/go-wtc/common"
-	"github.com/wtc/go-wtc/core"
-	"github.com/wtc/go-wtc/core/types"
-	"github.com/wtc/go-wtc/wtc"
-	"github.com/wtc/go-wtc/wtc/downloader"
-	"github.com/wtc/go-wtc/wtcclient"
-	"github.com/wtc/go-wtc/wtcstats"
-	"github.com/wtc/go-wtc/les"
-	"github.com/wtc/go-wtc/log"
-	"github.com/wtc/go-wtc/node"
-	"github.com/wtc/go-wtc/p2p"
-	"github.com/wtc/go-wtc/p2p/discover"
-	"github.com/wtc/go-wtc/p2p/discv5"
-	"github.com/wtc/go-wtc/p2p/nat"
-	"github.com/wtc/go-wtc/params"
+	"github.com/ethereum/go-ethereum/accounts"
+	"github.com/ethereum/go-ethereum/accounts/keystore"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/eth"
+	"github.com/ethereum/go-ethereum/eth/downloader"
+	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/ethereum/go-ethereum/ethstats"
+	"github.com/ethereum/go-ethereum/les"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/node"
+	"github.com/ethereum/go-ethereum/p2p"
+	"github.com/ethereum/go-ethereum/p2p/discover"
+	"github.com/ethereum/go-ethereum/p2p/discv5"
+	"github.com/ethereum/go-ethereum/p2p/nat"
+	"github.com/ethereum/go-ethereum/params"
 	"golang.org/x/net/websocket"
 )
 
@@ -63,7 +63,7 @@ var (
 	apiPortFlag = flag.Int("apiport", 8080, "Listener port for the HTTP API connection")
 	ethPortFlag = flag.Int("ethport", 10101, "Listener port for the devp2p connection")
 	bootFlag    = flag.String("bootnodes", "", "Comma separated bootnode enode URLs to seed with")
-	netFlag     = flag.Uint64("network", 0, "Network ID to use for the Wtc protocol")
+	netFlag     = flag.Uint64("network", 0, "Network ID to use for the Ethereum protocol")
 	statsFlag   = flag.String("ethstats", "", "Ethstats network monitoring auth string")
 
 	netnameFlag = flag.String("faucet.name", "", "Network name to assign to the faucet")
@@ -80,7 +80,7 @@ var (
 	captchaToken  = flag.String("captcha.token", "", "Recaptcha site key to authenticate client side")
 	captchaSecret = flag.String("captcha.secret", "", "Recaptcha secret key to authenticate server side")
 
-	logFlag = flag.Int("loglevel", 3, "Log level to use for Wtc and the faucet")
+	logFlag = flag.Int("loglevel", 3, "Log level to use for Ethereum and the faucet")
 )
 
 var (
@@ -182,16 +182,16 @@ func main() {
 // request represents an accepted funding request.
 type request struct {
 	Username string             `json:"username"` // GitHub user for displaying an avatar
-	Account  common.Address     `json:"account"`  // Wtc address being funded
+	Account  common.Address     `json:"account"`  // Ethereum address being funded
 	Time     time.Time          `json:"time"`     // Timestamp when te request was accepted
 	Tx       *types.Transaction `json:"tx"`       // Transaction funding the account
 }
 
-// faucet represents a crypto faucet backed by an Wtc light client.
+// faucet represents a crypto faucet backed by an Ethereum light client.
 type faucet struct {
 	config *params.ChainConfig // Chain configurations for signing
-	stack  *node.Node          // Wtc protocol stack
-	client *wtcclient.Client   // Client connection to the Wtc chain
+	stack  *node.Node          // Ethereum protocol stack
+	client *ethclient.Client   // Client connection to the Ethereum chain
 	index  []byte              // Index page to serve up on the web
 
 	keystore *keystore.KeyStore // Keystore containing the single signer
@@ -210,7 +210,7 @@ type faucet struct {
 func newFaucet(genesis *core.Genesis, port int, enodes []*discv5.Node, network uint64, stats string, ks *keystore.KeyStore, index []byte) (*faucet, error) {
 	// Assemble the raw devp2p protocol stack
 	stack, err := node.New(&node.Config{
-		Name:    "gwtc",
+		Name:    "geth",
 		Version: params.Version,
 		DataDir: filepath.Join(os.Getenv("HOME"), ".faucet"),
 		P2P: p2p.Config{
@@ -226,7 +226,7 @@ func newFaucet(genesis *core.Genesis, port int, enodes []*discv5.Node, network u
 	if err != nil {
 		return nil, err
 	}
-	// Assemble the Wtc light client protocol
+	// Assemble the Ethereum light client protocol
 	if err := stack.Register(func(ctx *node.ServiceContext) (node.Service, error) {
 		cfg := eth.DefaultConfig
 		cfg.SyncMode = downloader.LightSync
@@ -239,7 +239,7 @@ func newFaucet(genesis *core.Genesis, port int, enodes []*discv5.Node, network u
 	// Assemble the ethstats monitoring and reporting service'
 	if stats != "" {
 		if err := stack.Register(func(ctx *node.ServiceContext) (node.Service, error) {
-			var serv *les.LightWtc
+			var serv *les.LightEthereum
 			ctx.Service(&serv)
 			return ethstats.New(stats, nil, serv)
 		}); err != nil {
@@ -260,7 +260,7 @@ func newFaucet(genesis *core.Genesis, port int, enodes []*discv5.Node, network u
 		stack.Stop()
 		return nil, err
 	}
-	client := wtcclient.NewClient(api)
+	client := ethclient.NewClient(api)
 
 	return &faucet{
 		config:   genesis.Config,
@@ -274,7 +274,7 @@ func newFaucet(genesis *core.Genesis, port int, enodes []*discv5.Node, network u
 	}, nil
 }
 
-// close terminates the Wtc connection and tears down the faucet.
+// close terminates the Ethereum connection and tears down the faucet.
 func (f *faucet) close() error {
 	return f.stack.Stop()
 }
@@ -410,7 +410,7 @@ func (f *faucet) apiHandler(conn *websocket.Conn) {
 			websocket.JSON.Send(conn, map[string]string{"error": "Anonymous Gists not allowed"})
 			continue
 		}
-		// Iterate over all the files and look for Wtc addresses
+		// Iterate over all the files and look for Ethereum addresses
 		var address common.Address
 		for _, file := range gist.Files {
 			content := strings.TrimSpace(file.Content)
@@ -419,7 +419,7 @@ func (f *faucet) apiHandler(conn *websocket.Conn) {
 			}
 		}
 		if address == (common.Address{}) {
-			websocket.JSON.Send(conn, map[string]string{"error": "No Wtc address found to fund"})
+			websocket.JSON.Send(conn, map[string]string{"error": "No Ethereum address found to fund"})
 			continue
 		}
 		// Validate the user's existence since the API is unhelpful here

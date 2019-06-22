@@ -1,18 +1,18 @@
 // Copyright 2016 The go-ethereum Authors
-// This file is part of go-wtc.
+// This file is part of go-ethereum.
 //
-// go-wtc is free software: you can redistribute it and/or modify
+// go-ethereum is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// go-wtc is distributed in the hope that it will be useful,
+// go-ethereum is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with go-wtc. If not, see <http://www.gnu.org/licenses/>.
+// along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
 
 package main
 
@@ -27,7 +27,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/wtc/go-wtc/params"
+	"github.com/ethereum/go-ethereum/params"
 )
 
 const (
@@ -40,25 +40,25 @@ const (
 func TestConsoleWelcome(t *testing.T) {
 	coinbase := "0x8605cdbbdb6d264aa742e77020dcbc58fcdce182"
 
-	// Start a gwtc console, make sure it's cleaned up and terminate the console
-	gwtc := runGwtc(t,
+	// Start a geth console, make sure it's cleaned up and terminate the console
+	geth := runGeth(t,
 		"--port", "0", "--maxpeers", "0", "--nodiscover", "--nat", "none",
 		"--etherbase", coinbase, "--shh",
 		"console")
 
 	// Gather all the infos the welcome message needs to contain
-	gwtc.SetTemplateFunc("goos", func() string { return runtime.GOOS })
-	gwtc.SetTemplateFunc("goarch", func() string { return runtime.GOARCH })
-	gwtc.SetTemplateFunc("gover", runtime.Version)
-	gwtc.SetTemplateFunc("gwtcver", func() string { return params.Version })
-	gwtc.SetTemplateFunc("niltime", func() string { return time.Unix(0, 0).Format(time.RFC1123) })
-	gwtc.SetTemplateFunc("apis", func() string { return ipcAPIs })
+	geth.SetTemplateFunc("goos", func() string { return runtime.GOOS })
+	geth.SetTemplateFunc("goarch", func() string { return runtime.GOARCH })
+	geth.SetTemplateFunc("gover", runtime.Version)
+	geth.SetTemplateFunc("gethver", func() string { return params.Version })
+	geth.SetTemplateFunc("niltime", func() string { return time.Unix(0, 0).Format(time.RFC1123) })
+	geth.SetTemplateFunc("apis", func() string { return ipcAPIs })
 
 	// Verify the actual welcome message to the required template
-	gwtc.Expect(`
-Welcome to the Gwtc JavaScript console!
+	geth.Expect(`
+Welcome to the Geth JavaScript console!
 
-instance: Gwtc/v{{gwtcver}}/{{goos}}-{{goarch}}/{{gover}}
+instance: Geth/v{{gethver}}/{{goos}}-{{goarch}}/{{gover}}
 coinbase: {{.Etherbase}}
 at block: 0 ({{niltime}})
  datadir: {{.Datadir}}
@@ -66,7 +66,7 @@ at block: 0 ({{niltime}})
 
 > {{.InputLine "exit"}}
 `)
-	gwtc.ExpectExit()
+	geth.ExpectExit()
 }
 
 // Tests that a console can be attached to a running node via various means.
@@ -75,57 +75,57 @@ func TestIPCAttachWelcome(t *testing.T) {
 	coinbase := "0x8605cdbbdb6d264aa742e77020dcbc58fcdce182"
 	var ipc string
 	if runtime.GOOS == "windows" {
-		ipc = `\\.\pipe\gwtc` + strconv.Itoa(trulyRandInt(100000, 999999))
+		ipc = `\\.\pipe\geth` + strconv.Itoa(trulyRandInt(100000, 999999))
 	} else {
 		ws := tmpdir(t)
 		defer os.RemoveAll(ws)
-		ipc = filepath.Join(ws, "gwtc.ipc")
+		ipc = filepath.Join(ws, "geth.ipc")
 	}
 	// Note: we need --shh because testAttachWelcome checks for default
 	// list of ipc modules and shh is included there.
-	gwtc := runGwtc(t,
+	geth := runGeth(t,
 		"--port", "0", "--maxpeers", "0", "--nodiscover", "--nat", "none",
 		"--etherbase", coinbase, "--shh", "--ipcpath", ipc)
 
 	time.Sleep(2 * time.Second) // Simple way to wait for the RPC endpoint to open
-	testAttachWelcome(t, gwtc, "ipc:"+ipc, ipcAPIs)
+	testAttachWelcome(t, geth, "ipc:"+ipc, ipcAPIs)
 
-	gwtc.Interrupt()
-	gwtc.ExpectExit()
+	geth.Interrupt()
+	geth.ExpectExit()
 }
 
 func TestHTTPAttachWelcome(t *testing.T) {
 	coinbase := "0x8605cdbbdb6d264aa742e77020dcbc58fcdce182"
 	port := strconv.Itoa(trulyRandInt(1024, 65536)) // Yeah, sometimes this will fail, sorry :P
-	gwtc := runGwtc(t,
+	geth := runGeth(t,
 		"--port", "0", "--maxpeers", "0", "--nodiscover", "--nat", "none",
 		"--etherbase", coinbase, "--rpc", "--rpcport", port)
 
 	time.Sleep(2 * time.Second) // Simple way to wait for the RPC endpoint to open
-	testAttachWelcome(t, gwtc, "http://localhost:"+port, httpAPIs)
+	testAttachWelcome(t, geth, "http://localhost:"+port, httpAPIs)
 
-	gwtc.Interrupt()
-	gwtc.ExpectExit()
+	geth.Interrupt()
+	geth.ExpectExit()
 }
 
 func TestWSAttachWelcome(t *testing.T) {
 	coinbase := "0x8605cdbbdb6d264aa742e77020dcbc58fcdce182"
 	port := strconv.Itoa(trulyRandInt(1024, 65536)) // Yeah, sometimes this will fail, sorry :P
 
-	gwtc := runGwtc(t,
+	geth := runGeth(t,
 		"--port", "0", "--maxpeers", "0", "--nodiscover", "--nat", "none",
 		"--etherbase", coinbase, "--ws", "--wsport", port)
 
 	time.Sleep(2 * time.Second) // Simple way to wait for the RPC endpoint to open
-	testAttachWelcome(t, gwtc, "ws://localhost:"+port, httpAPIs)
+	testAttachWelcome(t, geth, "ws://localhost:"+port, httpAPIs)
 
-	gwtc.Interrupt()
-	gwtc.ExpectExit()
+	geth.Interrupt()
+	geth.ExpectExit()
 }
 
-func testAttachWelcome(t *testing.T, gwtc *testgwtc, endpoint, apis string) {
-	// Attach to a running gwtc note and terminate immediately
-	attach := runGwtc(t, "attach", endpoint)
+func testAttachWelcome(t *testing.T, geth *testgeth, endpoint, apis string) {
+	// Attach to a running geth note and terminate immediately
+	attach := runGeth(t, "attach", endpoint)
 	defer attach.ExpectExit()
 	attach.CloseStdin()
 
@@ -133,18 +133,18 @@ func testAttachWelcome(t *testing.T, gwtc *testgwtc, endpoint, apis string) {
 	attach.SetTemplateFunc("goos", func() string { return runtime.GOOS })
 	attach.SetTemplateFunc("goarch", func() string { return runtime.GOARCH })
 	attach.SetTemplateFunc("gover", runtime.Version)
-	attach.SetTemplateFunc("gwtcver", func() string { return params.Version })
-	attach.SetTemplateFunc("etherbase", func() string { return gwtc.Etherbase })
+	attach.SetTemplateFunc("gethver", func() string { return params.Version })
+	attach.SetTemplateFunc("etherbase", func() string { return geth.Etherbase })
 	attach.SetTemplateFunc("niltime", func() string { return time.Unix(0, 0).Format(time.RFC1123) })
 	attach.SetTemplateFunc("ipc", func() bool { return strings.HasPrefix(endpoint, "ipc") })
-	attach.SetTemplateFunc("datadir", func() string { return gwtc.Datadir })
+	attach.SetTemplateFunc("datadir", func() string { return geth.Datadir })
 	attach.SetTemplateFunc("apis", func() string { return apis })
 
 	// Verify the actual welcome message to the required template
 	attach.Expect(`
-Welcome to the Gwtc JavaScript console!
+Welcome to the Geth JavaScript console!
 
-instance: Gwtc/v{{gwtcver}}/{{goos}}-{{goarch}}/{{gover}}
+instance: Geth/v{{gethver}}/{{goos}}-{{goarch}}/{{gover}}
 coinbase: {{etherbase}}
 at block: 0 ({{niltime}}){{if ipc}}
  datadir: {{datadir}}{{end}}
