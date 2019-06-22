@@ -1,12 +1,12 @@
 // Copyright 2014 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The go-wtc library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The go-wtc library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -25,13 +25,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/metrics"
-	"github.com/ethereum/go-ethereum/params"
+	"github.com/wtc/go-wtc/common"
+	"github.com/wtc/go-wtc/core/state"
+	"github.com/wtc/go-wtc/core/types"
+	"github.com/wtc/go-wtc/event"
+	"github.com/wtc/go-wtc/log"
+	"github.com/wtc/go-wtc/metrics"
+	"github.com/wtc/go-wtc/params"
 	"gopkg.in/karalabe/cookiejar.v2/collections/prque"
 )
 
@@ -78,6 +78,10 @@ var (
 	// than some meaningful limit a user might use. This is not a consensus error
 	// making the transaction invalid, rather a DOS protection.
 	ErrOversizedData = errors.New("oversized data")
+
+	// ErrInsufficientFundsForCreateContrct is returned if the total cost of creating a new contract of transaction
+	// is higher than the balance of the user's account.
+	ErrInvalidSenderForCreateContract = errors.New("not enough balance to create contract!")
 )
 
 var (
@@ -350,7 +354,7 @@ func (pool *TxPool) reset(oldHead, newHead *types.Header) {
 		newNum := newHead.Number.Uint64()
 
 		if depth := uint64(math.Abs(float64(oldNum) - float64(newNum))); depth > 64 {
-			log.Warn("Skipping deep transaction reorg", "depth", depth)
+			//log.Warn("Skipping deep transaction reorg", "depth", depth)
 		} else {
 			// Reorg seems shallow enough to pull in all transactions into memory
 			var discarded, included types.Transactions
@@ -460,7 +464,7 @@ func (pool *TxPool) SetGasPrice(price *big.Int) {
 	for _, tx := range pool.priced.Cap(price, pool.locals) {
 		pool.removeTx(tx.Hash())
 	}
-	log.Info("Transaction pool price threshold updated", "price", price)
+	// log.Info("Transaction pool price threshold updated", "price", price)
 }
 
 // State returns the virtual managed state of the transaction pool.
@@ -580,6 +584,15 @@ func (pool *TxPool) validateTx(tx *types.Transaction, local bool) error {
 	if tx.Gas().Cmp(intrGas) < 0 {
 		return ErrIntrinsicGas
 	}
+
+	// Validate the balance needed to be great than MinGasFloorCreateContract to create contract.
+	// add by disy.yin disy.yin@gmail.com 2018-12-10
+	gasFloor := new(big.Int).Mul(params.MinGasFloorCreateContract, big.NewInt(1e+18))
+	if pool.currentState.GetBalance(from).Cmp(gasFloor) < 0 && tx.To() == nil {
+		fmt.Errorf("ErrInvalidSenderForCreateContract: GetBalance: %d", pool.currentState.GetBalance(from))
+		return ErrInvalidSenderForCreateContract
+	}
+
 	return nil
 }
 

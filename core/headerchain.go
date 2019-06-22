@@ -1,12 +1,12 @@
 // Copyright 2015 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The go-wtc library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The go-wtc library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -25,12 +25,13 @@ import (
 	mrand "math/rand"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/params"
+	"github.com/wtc/go-wtc/common"
+	"github.com/wtc/go-wtc/consensus"
+	"github.com/wtc/go-wtc/core/state"
+	"github.com/wtc/go-wtc/core/types"
+	"github.com/wtc/go-wtc/wtcdb"
+	"github.com/wtc/go-wtc/log"
+	"github.com/wtc/go-wtc/params"
 	"github.com/hashicorp/golang-lru"
 )
 
@@ -48,12 +49,13 @@ const (
 type HeaderChain struct {
 	config *params.ChainConfig
 
-	chainDb       ethdb.Database
+	chainDb       wtcdb.Database
 	genesisHeader *types.Header
 
 	currentHeader     *types.Header // Current head of the header chain (may be above the block chain!)
 	currentHeaderHash common.Hash   // Hash of the current head of the header chain (prevent recomputing all the time)
 
+	stateCache   state.Database // State database to reuse between imports (contains state cache)
 	headerCache *lru.Cache // Cache for the most recent block headers
 	tdCache     *lru.Cache // Cache for the most recent block total difficulties
 	numberCache *lru.Cache // Cache for the most recent block numbers
@@ -68,7 +70,7 @@ type HeaderChain struct {
 //  getValidator should return the parent's validator
 //  procInterrupt points to the parent's interrupt semaphore
 //  wg points to the parent's shutdown wait group
-func NewHeaderChain(chainDb ethdb.Database, config *params.ChainConfig, engine consensus.Engine, procInterrupt func() bool) (*HeaderChain, error) {
+func NewHeaderChain(chainDb wtcdb.Database, config *params.ChainConfig, engine consensus.Engine, procInterrupt func() bool) (*HeaderChain, error) {
 	headerCache, _ := lru.New(headerCacheLimit)
 	tdCache, _ := lru.New(tdCacheLimit)
 	numberCache, _ := lru.New(numberCacheLimit)
@@ -82,6 +84,7 @@ func NewHeaderChain(chainDb ethdb.Database, config *params.ChainConfig, engine c
 	hc := &HeaderChain{
 		config:        config,
 		chainDb:       chainDb,
+		stateCache:    state.NewDatabase(chainDb),
 		headerCache:   headerCache,
 		tdCache:       tdCache,
 		numberCache:   numberCache,
@@ -451,4 +454,20 @@ func (hc *HeaderChain) Engine() consensus.Engine { return hc.engine }
 // a header chain does not have blocks available for retrieval.
 func (hc *HeaderChain) GetBlock(hash common.Hash, number uint64) *types.Block {
 	return nil
+}
+
+func (hc *HeaderChain) GetBalanceAndCoinAgeByHeaderHash(addr common.Address) (*big.Int, *big.Int, *big.Int, *big.Int) {
+
+	s,_,Number,Time :=hc.State()
+	return s.GetBalance(addr),s.GetCoinAge(addr,Number,Time),Number,Time
+
+}
+
+func (hc *HeaderChain) State() (*state.StateDB, error, *big.Int, *big.Int) {
+	s,e := hc.StateAt(hc.currentHeader.Root)
+	return s,e, hc.currentHeader.Number, hc.currentHeader.Time
+}
+
+func (hc *HeaderChain) StateAt(root common.Hash) (*state.StateDB, error) {
+	return state.New(root, hc.stateCache)
 }

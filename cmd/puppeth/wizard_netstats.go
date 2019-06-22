@@ -1,18 +1,18 @@
 // Copyright 2017 The go-ethereum Authors
-// This file is part of go-ethereum.
+// This file is part of go-wtc.
 //
-// go-ethereum is free software: you can redistribute it and/or modify
+// go-wtc is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// go-ethereum is distributed in the hope that it will be useful,
+// go-wtc is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
+// along with go-wtc. If not, see <http://www.gnu.org/licenses/>.
 
 package main
 
@@ -22,8 +22,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/log"
+	"github.com/wtc/go-wtc/core"
+	"github.com/wtc/go-wtc/log"
 	"github.com/olekukonko/tablewriter"
 )
 
@@ -168,8 +168,8 @@ func (p *protips) print(network string) {
 	// If a known genesis block is available, display it and prepend an init command
 	fullinit, lightinit := "", ""
 	if p.genesis != "" {
-		fullinit = fmt.Sprintf("geth --datadir=$HOME/.%s init %s.json && ", network, network)
-		lightinit = fmt.Sprintf("geth --datadir=$HOME/.%s --light init %s.json && ", network, network)
+		fullinit = fmt.Sprintf("gwtc --datadir=$HOME/.%s init %s.json && ", network, network)
+		lightinit = fmt.Sprintf("gwtc --datadir=$HOME/.%s --light init %s.json && ", network, network)
 	}
 	// If an ethstats server is available, add the ethstats flag
 	statsflag := ""
@@ -193,16 +193,16 @@ func (p *protips) print(network string) {
 	var tasks, tips []string
 
 	tasks = append(tasks, "Run an archive node with historical data")
-	tips = append(tips, fmt.Sprintf("%sgeth --networkid=%d --datadir=$HOME/.%s --cache=1024%s%s", fullinit, p.network, network, statsflag, bootflagFull))
+	tips = append(tips, fmt.Sprintf("%sgwtc --networkid=%d --datadir=$HOME/.%s --cache=1024%s%s", fullinit, p.network, network, statsflag, bootflagFull))
 
 	tasks = append(tasks, "Run a full node with recent data only")
-	tips = append(tips, fmt.Sprintf("%sgeth --networkid=%d --datadir=$HOME/.%s --cache=512 --fast%s%s", fullinit, p.network, network, statsflag, bootflagFull))
+	tips = append(tips, fmt.Sprintf("%sgwtc --networkid=%d --datadir=$HOME/.%s --cache=512 --fast%s%s", fullinit, p.network, network, statsflag, bootflagFull))
 
 	tasks = append(tasks, "Run a light node with on demand retrievals")
-	tips = append(tips, fmt.Sprintf("%sgeth --networkid=%d --datadir=$HOME/.%s --light%s%s", lightinit, p.network, network, statsflag, bootflagLight))
+	tips = append(tips, fmt.Sprintf("%sgwtc --networkid=%d --datadir=$HOME/.%s --light%s%s", lightinit, p.network, network, statsflag, bootflagLight))
 
 	tasks = append(tasks, "Run an embedded node with constrained memory")
-	tips = append(tips, fmt.Sprintf("%sgeth --networkid=%d --datadir=$HOME/.%s --cache=32 --light%s%s", lightinit, p.network, network, statsflag, bootflagLight))
+	tips = append(tips, fmt.Sprintf("%sgwtc --networkid=%d --datadir=$HOME/.%s --cache=32 --light%s%s", lightinit, p.network, network, statsflag, bootflagLight))
 
 	// If the tips are short, display in a table
 	short := true

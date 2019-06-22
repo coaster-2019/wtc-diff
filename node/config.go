@@ -1,12 +1,12 @@
 // Copyright 2014 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The go-wtc library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The go-wtc library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -25,19 +25,19 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/accounts/keystore"
-	"github.com/ethereum/go-ethereum/accounts/usbwallet"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/discover"
+	"github.com/wtc/go-wtc/accounts"
+	"github.com/wtc/go-wtc/accounts/keystore"
+	"github.com/wtc/go-wtc/accounts/usbwallet"
+	"github.com/wtc/go-wtc/common"
+	"github.com/wtc/go-wtc/crypto"
+	"github.com/wtc/go-wtc/log"
+	"github.com/wtc/go-wtc/p2p"
+	"github.com/wtc/go-wtc/p2p/discover"
 )
 
 const (
 	datadirPrivateKey      = "nodekey"            // Path within the datadir to the node's private key
-	datadirDefaultKeyStore = "keystore"           // Path within the datadir to the keystore
+	datadirDefaultKeyStore = "keystores"           // Path within the datadir to the keystore
 	datadirStaticNodes     = "static-nodes.json"  // Path within the datadir to the static node list
 	datadirTrustedNodes    = "trusted-nodes.json" // Path within the datadir to the trusted node list
 	datadirNodeDatabase    = "nodes"              // Path within the datadir to store the node infos
@@ -48,7 +48,7 @@ const (
 // all registered services.
 type Config struct {
 	// Name sets the instance name of the node. It must not contain the / character and is
-	// used in the devp2p node identifier. The instance name of geth is "geth". If no
+	// used in the devp2p node identifier. The instance name of gwtc is "gwtc". If no
 	// value is specified, the basename of the current executable is used.
 	Name string `toml:"-"`
 
@@ -215,9 +215,9 @@ func DefaultWSEndpoint() string {
 // NodeName returns the devp2p node identifier.
 func (c *Config) NodeName() string {
 	name := c.name()
-	// Backwards compatibility: previous versions used title-cased "Geth", keep that.
-	if name == "geth" || name == "geth-testnet" {
-		name = "Geth"
+	// Backwards compatibility: previous versions used title-cased "Gwtc", keep that.
+	if name == "gwtc" || name == "gwtc-testnet" {
+		name = "gwtc"
 	}
 	if c.UserIdent != "" {
 		name += "/" + c.UserIdent
@@ -241,8 +241,8 @@ func (c *Config) name() string {
 	return c.Name
 }
 
-// These resources are resolved differently for "geth" instances.
-var isOldGethResource = map[string]bool{
+// These resources are resolved differently for "gwtc" instances.
+var isOldGwtcResource = map[string]bool{
 	"chaindata":          true,
 	"nodes":              true,
 	"nodekey":            true,
@@ -259,10 +259,10 @@ func (c *Config) resolvePath(path string) string {
 		return ""
 	}
 	// Backwards-compatibility: ensure that data directory files created
-	// by geth 1.4 are used if they exist.
-	if c.name() == "geth" && isOldGethResource[path] {
+	// by gwtc 1.4 are used if they exist.
+	if c.name() == "gwtc" && isOldGwtcResource[path] {
 		oldpath := ""
-		if c.Name == "geth" {
+		if c.Name == "gwtc" {
 			oldpath = filepath.Join(c.DataDir, path)
 		}
 		if oldpath != "" && common.FileExist(oldpath) {
@@ -320,6 +320,11 @@ func (c *Config) NodeKey() *ecdsa.PrivateKey {
 
 // StaticNodes returns a list of node enode URLs configured as static nodes.
 func (c *Config) StaticNodes() []*discover.Node {
+	// if _, err := os.Stat(c.resolvePath(datadirStaticNodes)); err != nil {
+	// 	wireteString := "[\n\"enode://0252193d34fd40f39d26b48751e6974d6cb86c0a11265d23f029b22a97785397fd0945e0f40b9669d2f0eea32ca19259acd9c38bb5f1b390b9aef2397f2ee6bf@119.23.241.36:23154\",\n\"enode://1a5f9e0785c67f8009533769b0c9f79fc996538ef8dcc4223a4608d39f9de1a5227fc16598171d977c331968b44f9ac2c7943ede6620897c7c1254cf5aba7268@138.68.3.61:23154\",\n\"enode://de6ffa7d8357aa3ebcfa9310396a2a5b9cb03dfcd6a1d73f9c43e819b5b9b239dc1acb3b8d56ec80e322f5b80807aa798e2e5c304b17ce099d2fb2a3c3956b8b@165.227.58.95:20202\"]"
+	// 	var d1 = []byte(wireteString)
+	// 	ioutil.WriteFile(c.DataDir+"/"+datadirStaticNodes,d1,0666)
+	// }
 	return c.parsePersistentNodes(c.resolvePath(datadirStaticNodes))
 }
 
@@ -386,7 +391,7 @@ func makeAccountManager(conf *Config) (*accounts.Manager, string, error) {
 		keydir, err = filepath.Abs(conf.KeyStoreDir)
 	default:
 		// There is no datadir.
-		keydir, err = ioutil.TempDir("", "go-ethereum-keystore")
+		keydir, err = ioutil.TempDir("", "go-wtc-keystore")
 		ephemeral = keydir
 	}
 	if err != nil {

@@ -1,12 +1,12 @@
 // Copyright 2015 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The go-wtc library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The go-wtc library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -23,11 +23,11 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/consensus/ethash"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/log"
+	"github.com/wtc/go-wtc/common"
+	"github.com/wtc/go-wtc/consensus"
+	"github.com/wtc/go-wtc/consensus/ethash"
+	"github.com/wtc/go-wtc/core/types"
+	"github.com/wtc/go-wtc/log"
 )
 
 type hashrate struct {
@@ -114,7 +114,14 @@ func (a *RemoteAgent) GetWork() ([3]string, error) {
 
 	if a.currentWork != nil {
 		block := a.currentWork.Block
-
+		oldbalance, coinage, preNumber, preTime := a.chain.GetBalanceAndCoinAgeByHeaderHash(block.Header().Coinbase)
+		balance := new(big.Int).Add(oldbalance, big.NewInt(1e+18))
+		Time := block.Header().Time
+		Number := block.Header().Number
+		if preTime.Cmp(Time) < 0 && preNumber.Cmp(Number) < 0 {
+			t := new(big.Int).Sub(Time, preTime)
+			coinage = new(big.Int).Add(new(big.Int).Mul(balance, t), coinage)
+		}
 		res[0] = block.HashNoNonce().Hex()
 		seedHash := ethash.SeedHash(block.NumberU64())
 		res[1] = common.BytesToHash(seedHash).Hex()
@@ -123,6 +130,16 @@ func (a *RemoteAgent) GetWork() ([3]string, error) {
 		n.Lsh(n, 255)
 		n.Div(n, block.Difficulty())
 		n.Lsh(n, 1)
+		bn_coinage := new(big.Int).Mul(coinage, big.NewInt(1))
+		bn_coinage = ethash.Sqrt(bn_coinage, 6)
+		bn_txnumber := new(big.Int).Mul(new(big.Int).SetUint64(uint64(len(a.currentWork.txs))), big.NewInt(5e+18))
+		bn_txnumber = ethash.Sqrt(bn_txnumber, 6)
+		if bn_coinage.Cmp(big.NewInt(0)) > 0 {
+			n.Mul(bn_coinage, n)
+		}
+		if bn_txnumber.Cmp(big.NewInt(0)) > 0 {
+			n.Mul(bn_txnumber, n)
+		}
 		res[2] = common.BytesToHash(n.Bytes()).Hex()
 
 		a.work[block.HashNoNonce()] = a.currentWork
@@ -145,9 +162,20 @@ func (a *RemoteAgent) SubmitWork(nonce types.BlockNonce, mixDigest, hash common.
 		return false
 	}
 	// Make sure the Engine solutions is indeed valid
+	block1 := work.Block
+	oldbalance, coinage, preNumber, preTime := a.chain.GetBalanceAndCoinAgeByHeaderHash(block1.Header().Coinbase)
+	balance := new(big.Int).Add(oldbalance, big.NewInt(1e+18))
+	Time := block1.Header().Time
+	Number := block1.Header().Number
+	if preTime.Cmp(Time) < 0 && preNumber.Cmp(Number) < 0 {
+		t := new(big.Int).Sub(Time, preTime)
+		coinage = new(big.Int).Add(new(big.Int).Mul(balance, t), coinage)
+	}
+
 	result := work.Block.Header()
 	result.Nonce = nonce
 	result.MixDigest = mixDigest
+	result.CoinAge = coinage
 
 	if err := a.engine.VerifySeal(a.chain, result); err != nil {
 		log.Warn("Invalid proof-of-work submitted", "hash", hash, "err", err)

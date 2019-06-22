@@ -1,12 +1,12 @@
 // Copyright 2014 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The go-wtc library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The go-wtc library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -24,10 +24,10 @@ import (
 	"math/big"
 	"sync/atomic"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/wtc/go-wtc/common"
+	"github.com/wtc/go-wtc/common/hexutil"
+	"github.com/wtc/go-wtc/crypto"
+	"github.com/wtc/go-wtc/rlp"
 )
 
 //go:generate gencodec -type txdata -field-override txdataMarshaling -out gen_tx_json.go
@@ -196,6 +196,18 @@ func (tx *Transaction) To() *common.Address {
 		to := *tx.data.Recipient
 		return &to
 	}
+}
+
+// From returns the sender address of the transaction.
+// add by disy.yin disy.yin@gmail.com 2018-12-10
+func (tx *Transaction) From() (common.Address, error) {
+	var from common.Address
+	var err error
+	if tx.data.V != nil {
+		signer := deriveSigner(tx.data.V)
+		from, err = Sender(signer, tx);
+	}
+	return from, err
 }
 
 // Hash hashes the RLP encoding of tx.

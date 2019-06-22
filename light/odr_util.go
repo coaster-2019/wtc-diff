@@ -1,12 +1,12 @@
 // Copyright 2016 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The go-wtc library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The go-wtc library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -22,12 +22,12 @@ import (
 	"errors"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/wtc/go-wtc/common"
+	"github.com/wtc/go-wtc/core"
+	"github.com/wtc/go-wtc/core/types"
+	"github.com/wtc/go-wtc/crypto"
+	"github.com/wtc/go-wtc/wtcdb"
+	"github.com/wtc/go-wtc/rlp"
 )
 
 var sha3_nil = crypto.Keccak256Hash(nil)
@@ -51,7 +51,7 @@ type TrustedCht struct {
 	Root   common.Hash
 }
 
-func GetTrustedCht(db ethdb.Database) TrustedCht {
+func GetTrustedCht(db wtcdb.Database) TrustedCht {
 	data, _ := db.Get(trustedChtKey)
 	var res TrustedCht
 	if err := rlp.DecodeBytes(data, &res); err != nil {
@@ -60,12 +60,12 @@ func GetTrustedCht(db ethdb.Database) TrustedCht {
 	return res
 }
 
-func WriteTrustedCht(db ethdb.Database, cht TrustedCht) {
+func WriteTrustedCht(db wtcdb.Database, cht TrustedCht) {
 	data, _ := rlp.EncodeToBytes(cht)
 	db.Put(trustedChtKey, data)
 }
 
-func DeleteTrustedCht(db ethdb.Database) {
+func DeleteTrustedCht(db wtcdb.Database) {
 	db.Delete(trustedChtKey)
 }
 

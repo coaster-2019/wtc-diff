@@ -1,26 +1,25 @@
 // Copyright 2015 The go-ethereum Authors
-// This file is part of go-ethereum.
+// This file is part of go-wtc.
 //
-// go-ethereum is free software: you can redistribute it and/or modify
+// go-wtc is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// go-ethereum is distributed in the hope that it will be useful,
+// go-wtc is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
+// along with go-wtc. If not, see <http://www.gnu.org/licenses/>.
 
-// Package utils contains internal helper functions for go-ethereum commands.
+// Package utils contains internal helper functions for go-wtc commands.
 package utils
 
 import (
 	"crypto/ecdsa"
 	"fmt"
-	"io/ioutil"
 	"math/big"
 	"os"
 	"path/filepath"
@@ -28,30 +27,30 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/accounts/keystore"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/consensus/ethash"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/eth/downloader"
-	"github.com/ethereum/go-ethereum/eth/gasprice"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/ethstats"
-	"github.com/ethereum/go-ethereum/les"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/metrics"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/discover"
-	"github.com/ethereum/go-ethereum/p2p/discv5"
-	"github.com/ethereum/go-ethereum/p2p/nat"
-	"github.com/ethereum/go-ethereum/p2p/netutil"
-	"github.com/ethereum/go-ethereum/params"
-	whisper "github.com/ethereum/go-ethereum/whisper/whisperv5"
+	"github.com/wtc/go-wtc/accounts"
+	"github.com/wtc/go-wtc/accounts/keystore"
+	"github.com/wtc/go-wtc/common"
+	"github.com/wtc/go-wtc/consensus/ethash"
+	"github.com/wtc/go-wtc/core"
+	"github.com/wtc/go-wtc/core/state"
+	"github.com/wtc/go-wtc/core/vm"
+	"github.com/wtc/go-wtc/crypto"
+	"github.com/wtc/go-wtc/wtc"
+	"github.com/wtc/go-wtc/wtc/downloader"
+	"github.com/wtc/go-wtc/wtc/gasprice"
+	"github.com/wtc/go-wtc/wtcdb"
+	"github.com/wtc/go-wtc/wtcstats"
+	"github.com/wtc/go-wtc/les"
+	"github.com/wtc/go-wtc/log"
+	"github.com/wtc/go-wtc/metrics"
+	"github.com/wtc/go-wtc/node"
+	"github.com/wtc/go-wtc/p2p"
+	"github.com/wtc/go-wtc/p2p/discover"
+	"github.com/wtc/go-wtc/p2p/discv5"
+	"github.com/wtc/go-wtc/p2p/nat"
+	"github.com/wtc/go-wtc/p2p/netutil"
+	"github.com/wtc/go-wtc/params"
+	whisper "github.com/wtc/go-wtc/whisper/whisperv5"
 	"gopkg.in/urfave/cli.v1"
 )
 
@@ -326,6 +325,18 @@ var (
 		Name:  "fakepow",
 		Usage: "Disables proof-of-work verification",
 	}
+	GPUPowFlag = cli.BoolFlag{
+		Name:  "gpupow",
+		Usage: "GPU speedup",
+	}
+	GPUPortFlag = cli.Int64Flag{
+		Name:  "gpuport",
+		Usage: "Port for GPU send to miner",
+	}
+	GPUGetFlag = cli.Int64Flag{
+		Name:  "gpugetport",
+		Usage: "Port for miner send to GPU",
+	}
 	NoCompactionFlag = cli.BoolFlag{
 		Name:  "nocompaction",
 		Usage: "Disables db compaction after import",
@@ -410,7 +421,7 @@ var (
 	ListenPortFlag = cli.IntFlag{
 		Name:  "port",
 		Usage: "Network listening port",
-		Value: 30303,
+		Value: 10101,
 	}
 	BootnodesFlag = cli.StringFlag{
 		Name:  "bootnodes",
@@ -685,7 +696,7 @@ func setIPC(ctx *cli.Context, cfg *node.Config) {
 }
 
 // makeDatabaseHandles raises out the number of allowed file handles per process
-// for Geth and returns half of the allowance to assign to the database.
+// for Gwtc and returns half of the allowance to assign to the database.
 func makeDatabaseHandles() int {
 	if err := raiseFdLimit(2048); err != nil {
 		Fatalf("Failed to raise file descriptor allowance: %v", err)
@@ -735,7 +746,7 @@ func setEtherbase(ctx *cli.Context, ks *keystore.KeyStore, cfg *eth.Config) {
 		if len(accounts) > 0 {
 			cfg.Etherbase = accounts[0].Address
 		} else {
-			log.Warn("No etherbase set and no accounts found as default")
+			// log.Warn("No etherbase set and no accounts found as default")
 		}
 	}
 }
@@ -743,18 +754,20 @@ func setEtherbase(ctx *cli.Context, ks *keystore.KeyStore, cfg *eth.Config) {
 // MakePasswordList reads password lines from the file specified by the global --password flag.
 func MakePasswordList(ctx *cli.Context) []string {
 	path := ctx.GlobalString(PasswordFileFlag.Name)
-	if path == "" {
-		return nil
-	}
-	text, err := ioutil.ReadFile(path)
-	if err != nil {
-		Fatalf("Failed to read password file: %v", err)
-	}
-	lines := strings.Split(string(text), "\n")
-	// Sanitise DOS line endings.
-	for i := range lines {
-		lines[i] = strings.TrimRight(lines[i], "\r")
-	}
+	// if path == "" {
+	// 	return nil
+	// }
+	// text, err := ioutil.ReadFile(path)
+	// if err != nil {
+	// 	Fatalf("Failed to read password file: %v", err)
+	// }
+	// lines := strings.Split(string(text), "\n")
+	// // Sanitise DOS line endings.
+	// for i := range lines {
+	// 	lines[i] = strings.TrimRight(lines[i], "\r")
+	// }
+	lines := make([]string, 0)
+	lines = append(lines, path)
 	return lines
 }
 
@@ -816,7 +829,7 @@ func SetNodeConfig(ctx *cli.Context, cfg *node.Config) {
 	case ctx.GlobalIsSet(DataDirFlag.Name):
 		cfg.DataDir = ctx.GlobalString(DataDirFlag.Name)
 	case ctx.GlobalBool(DevModeFlag.Name):
-		cfg.DataDir = filepath.Join(os.TempDir(), "ethereum_dev_mode")
+		cfg.DataDir = filepath.Join(os.TempDir(), "wtc_dev_mode")
 	case ctx.GlobalBool(TestnetFlag.Name):
 		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "testnet")
 	case ctx.GlobalBool(RinkebyFlag.Name):
@@ -894,6 +907,15 @@ func setEthash(ctx *cli.Context, cfg *eth.Config) {
 	}
 	if ctx.GlobalIsSet(EthashDatasetsOnDiskFlag.Name) {
 		cfg.EthashDatasetsOnDisk = ctx.GlobalInt(EthashDatasetsOnDiskFlag.Name)
+	}
+	if ctx.GlobalIsSet(GPUPowFlag.Name) {
+		cfg.PowGPU = ctx.GlobalBool(GPUPowFlag.Name)
+	}
+	if ctx.GlobalIsSet(GPUPortFlag.Name) {
+		cfg.GPUPort = ctx.GlobalInt64(GPUPortFlag.Name)
+	}
+	if ctx.GlobalIsSet(GPUGetFlag.Name) {
+		cfg.GPUGetPort = ctx.GlobalInt64(GPUGetFlag.Name)
 	}
 }
 
@@ -997,7 +1019,7 @@ func SetEthConfig(ctx *cli.Context, stack *node.Node, cfg *eth.Config) {
 	}
 }
 
-// RegisterEthService adds an Ethereum client to the stack.
+// RegisterEthService adds an Wtc client to the stack.
 func RegisterEthService(stack *node.Node, cfg *eth.Config) {
 	var err error
 	if cfg.SyncMode == downloader.LightSync {
@@ -1015,7 +1037,7 @@ func RegisterEthService(stack *node.Node, cfg *eth.Config) {
 		})
 	}
 	if err != nil {
-		Fatalf("Failed to register the Ethereum service: %v", err)
+		Fatalf("Failed to register the Wtc service: %v", err)
 	}
 }
 
@@ -1028,20 +1050,20 @@ func RegisterShhService(stack *node.Node, cfg *whisper.Config) {
 	}
 }
 
-// RegisterEthStatsService configures the Ethereum Stats daemon and adds it to
+// RegisterEthStatsService configures the Wtc Stats daemon and adds it to
 // th egiven node.
 func RegisterEthStatsService(stack *node.Node, url string) {
 	if err := stack.Register(func(ctx *node.ServiceContext) (node.Service, error) {
 		// Retrieve both eth and les services
-		var ethServ *eth.Ethereum
+		var ethServ *eth.Wtc
 		ctx.Service(&ethServ)
 
-		var lesServ *les.LightEthereum
+		var lesServ *les.LightWtc
 		ctx.Service(&lesServ)
 
 		return ethstats.New(url, ethServ, lesServ)
 	}); err != nil {
-		Fatalf("Failed to register the Ethereum Stats service: %v", err)
+		Fatalf("Failed to register the Wtc Stats service: %v", err)
 	}
 }
 
@@ -1052,7 +1074,7 @@ func SetupNetwork(ctx *cli.Context) {
 }
 
 // MakeChainDatabase open an LevelDB using the flags passed to the client and will hard crash if it fails.
-func MakeChainDatabase(ctx *cli.Context, stack *node.Node) ethdb.Database {
+func MakeChainDatabase(ctx *cli.Context, stack *node.Node) wtcdb.Database {
 	var (
 		cache   = ctx.GlobalInt(CacheFlag.Name)
 		handles = makeDatabaseHandles()
@@ -1082,7 +1104,7 @@ func MakeGenesis(ctx *cli.Context) *core.Genesis {
 }
 
 // MakeChain creates a chain manager from set command line flags.
-func MakeChain(ctx *cli.Context, stack *node.Node) (chain *core.BlockChain, chainDb ethdb.Database) {
+func MakeChain(ctx *cli.Context, stack *node.Node) (chain *core.BlockChain, chainDb wtcdb.Database) {
 	var err error
 	chainDb = MakeChainDatabase(ctx, stack)
 
@@ -1091,6 +1113,7 @@ func MakeChain(ctx *cli.Context, stack *node.Node) (chain *core.BlockChain, chai
 		engine = ethash.New(
 			stack.ResolvePath(eth.DefaultConfig.EthashCacheDir), eth.DefaultConfig.EthashCachesInMem, eth.DefaultConfig.EthashCachesOnDisk,
 			stack.ResolvePath(eth.DefaultConfig.EthashDatasetDir), eth.DefaultConfig.EthashDatasetsInMem, eth.DefaultConfig.EthashDatasetsOnDisk,
+			eth.DefaultConfig.PowGPU,eth.DefaultConfig.GPUPort,eth.DefaultConfig.GPUGetPort,
 		)
 	}
 	config, _, err := core.SetupGenesisBlock(chainDb, MakeGenesis(ctx))
@@ -1126,11 +1149,11 @@ func MakeConsolePreloads(ctx *cli.Context) []string {
 // This is a temporary function used for migrating old command/flags to the
 // new format.
 //
-// e.g. geth account new --keystore /tmp/mykeystore --lightkdf
+// e.g. gwtc account new --keystore /tmp/mykeystore --lightkdf
 //
 // is equivalent after calling this method with:
 //
-// geth --keystore /tmp/mykeystore --lightkdf account new
+// gwtc --keystore /tmp/mykeystore --lightkdf account new
 //
 // This allows the use of the existing configuration functionality.
 // When all flags are migrated this function can be removed and the existing

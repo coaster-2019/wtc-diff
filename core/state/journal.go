@@ -1,12 +1,12 @@
 // Copyright 2016 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The go-wtc library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The go-wtc library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -19,7 +19,7 @@ package state
 import (
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/wtc/go-wtc/common"
 )
 
 type journalEntry interface {
@@ -40,12 +40,24 @@ type (
 		account     *common.Address
 		prev        bool // whether account had already suicided
 		prevbalance *big.Int
+		prevcoinage *big.Int
+		//prevfublocknum *big.Int
+		prevfublocktime *big.Int
 	}
 
 	// Changes to individual accounts.
 	balanceChange struct {
 		account *common.Address
 		prev    *big.Int
+	}
+	coinageChange struct {
+		account *common.Address
+		prev    *big.Int
+	}
+	fublockChange struct {
+		account *common.Address
+		//prevnum *big.Int
+		prevtime *big.Int
 	}
 	nonceChange struct {
 		account *common.Address
@@ -91,6 +103,8 @@ func (ch suicideChange) undo(s *StateDB) {
 	if obj != nil {
 		obj.suicided = ch.prev
 		obj.setBalance(ch.prevbalance)
+		obj.setCoinAge(ch.prevcoinage)
+		obj.setFUBlock(ch.prevfublocktime)
 	}
 }
 
@@ -107,6 +121,14 @@ func (ch touchChange) undo(s *StateDB) {
 
 func (ch balanceChange) undo(s *StateDB) {
 	s.getStateObject(*ch.account).setBalance(ch.prev)
+}
+
+func (ch coinageChange) undo(s *StateDB) {
+	s.getStateObject(*ch.account).setCoinAge(ch.prev)
+}
+
+func (ch fublockChange) undo(s *StateDB) {
+	s.getStateObject(*ch.account).setFUBlock(ch.prevtime)
 }
 
 func (ch nonceChange) undo(s *StateDB) {

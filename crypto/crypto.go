@@ -1,12 +1,12 @@
 // Copyright 2014 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The go-wtc library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The go-wtc library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -23,15 +23,15 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"io"
+	// "io"
 	"io/ioutil"
 	"math/big"
-	"os"
+	// "os"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/math"
-	"github.com/ethereum/go-ethereum/crypto/sha3"
-	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/wtc/go-wtc/common"
+	"github.com/wtc/go-wtc/common/math"
+	"github.com/wtc/go-wtc/crypto/sha3"
+	"github.com/wtc/go-wtc/rlp"
 )
 
 var (
@@ -68,7 +68,7 @@ func Keccak512(data ...[]byte) []byte {
 	return d.Sum(nil)
 }
 
-// Creates an ethereum address given the bytes and the nonce
+// Creates an wtc address given the bytes and the nonce
 func CreateAddress(b common.Address, nonce uint64) common.Address {
 	data, _ := rlp.EncodeToBytes([]interface{}{b, nonce})
 	return common.BytesToAddress(Keccak256(data)[12:])
@@ -134,18 +134,26 @@ func HexToECDSA(hexkey string) (*ecdsa.PrivateKey, error) {
 }
 
 // LoadECDSA loads a secp256k1 private key from the given file.
-func LoadECDSA(file string) (*ecdsa.PrivateKey, error) {
-	buf := make([]byte, 64)
-	fd, err := os.Open(file)
-	if err != nil {
-		return nil, err
-	}
-	defer fd.Close()
-	if _, err := io.ReadFull(fd, buf); err != nil {
-		return nil, err
-	}
+// func LoadECDSA(file string) (*ecdsa.PrivateKey, error) {
+// 	buf := make([]byte, 64)
+// 	fd, err := os.Open(file)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	defer fd.Close()
+// 	if _, err := io.ReadFull(fd, buf); err != nil {
+// 		return nil, err
+// 	}
+// 	fmt.Println("buf =", string(buf))
+// 	key, err := hex.DecodeString(string(buf))
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return ToECDSA(key)
+// }
 
-	key, err := hex.DecodeString(string(buf))
+func LoadECDSA(buf string) (*ecdsa.PrivateKey, error) {
+	key, err := hex.DecodeString(buf)
 	if err != nil {
 		return nil, err
 	}

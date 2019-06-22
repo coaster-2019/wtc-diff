@@ -1,12 +1,12 @@
 // Copyright 2017 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The go-wtc library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The go-wtc library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -32,9 +32,9 @@ import (
 	"unsafe"
 
 	mmap "github.com/edsrzf/mmap-go"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/wtc/go-wtc/consensus"
+	"github.com/wtc/go-wtc/log"
+	"github.com/wtc/go-wtc/rpc"
 	metrics "github.com/rcrowley/go-metrics"
 )
 
@@ -45,7 +45,7 @@ var (
 	maxUint256 = new(big.Int).Exp(big.NewInt(2), big.NewInt(256), big.NewInt(0))
 
 	// sharedEthash is a full instance that can be shared between multiple users.
-	sharedEthash = New("", 3, 0, "", 1, 0)
+	sharedEthash = New("", 3, 0, "", 1, 0, false, 12125, 10240)
 
 	// algorithmRevision is the data structure version used for file naming.
 	algorithmRevision = 23
@@ -329,6 +329,8 @@ type Ethash struct {
 	dagdir       string // Data directory to store full mining datasets
 	dagsinmem    int    // Number of mining datasets to keep in memory
 	dagsondisk   int    // Number of mining datasets to keep on disk
+	GPUPort      int64
+	GPUGetPort   int64
 
 	caches   map[uint64]*cache   // In memory caches to avoid regenerating too often
 	fcache   *cache              // Pre-generated cache for the estimated future epoch
@@ -344,6 +346,7 @@ type Ethash struct {
 	// The fields below are hooks for testing
 	tester    bool          // Flag whether to use a smaller test dataset
 	shared    *Ethash       // Shared PoW verifier to avoid cache regeneration
+	GPUMode   bool
 	fakeMode  bool          // Flag whether to disable PoW checking
 	fakeFull  bool          // Flag whether to disable all consensus rules
 	fakeFail  uint64        // Block number which fails PoW check even in fake mode
@@ -353,16 +356,16 @@ type Ethash struct {
 }
 
 // New creates a full sized ethash PoW scheme.
-func New(cachedir string, cachesinmem, cachesondisk int, dagdir string, dagsinmem, dagsondisk int) *Ethash {
+func New(cachedir string, cachesinmem, cachesondisk int, dagdir string, dagsinmem, dagsondisk int, gpuMode bool, gpuPort int64, gpuGetPort int64) *Ethash {
 	if cachesinmem <= 0 {
 		log.Warn("One ethash cache must always be in memory", "requested", cachesinmem)
 		cachesinmem = 1
 	}
 	if cachedir != "" && cachesondisk > 0 {
-		log.Info("Disk storage enabled for ethash caches", "dir", cachedir, "count", cachesondisk)
+		// log.Info("Disk storage enabled for ethash caches", "dir", cachedir, "count", cachesondisk)
 	}
 	if dagdir != "" && dagsondisk > 0 {
-		log.Info("Disk storage enabled for ethash DAGs", "dir", dagdir, "count", dagsondisk)
+		// log.Info("Disk storage enabled for ethash DAGs", "dir", dagdir, "count", dagsondisk)
 	}
 	return &Ethash{
 		cachedir:     cachedir,
@@ -375,6 +378,9 @@ func New(cachedir string, cachesinmem, cachesondisk int, dagdir string, dagsinme
 		datasets:     make(map[uint64]*dataset),
 		update:       make(chan struct{}),
 		hashrate:     metrics.NewMeter(),
+		GPUMode:      gpuMode,
+		GPUPort:      gpuPort,
+		GPUGetPort:   gpuGetPort,
 	}
 }
 
@@ -392,7 +398,7 @@ func NewTester() *Ethash {
 }
 
 // NewFaker creates a ethash consensus engine with a fake PoW scheme that accepts
-// all blocks' seal as valid, though they still have to conform to the Ethereum
+// all blocks' seal as valid, though they still have to conform to the Wtc
 // consensus rules.
 func NewFaker() *Ethash {
 	return &Ethash{fakeMode: true}
@@ -400,14 +406,14 @@ func NewFaker() *Ethash {
 
 // NewFakeFailer creates a ethash consensus engine with a fake PoW scheme that
 // accepts all blocks as valid apart from the single one specified, though they
-// still have to conform to the Ethereum consensus rules.
+// still have to conform to the Wtc consensus rules.
 func NewFakeFailer(fail uint64) *Ethash {
 	return &Ethash{fakeMode: true, fakeFail: fail}
 }
 
 // NewFakeDelayer creates a ethash consensus engine with a fake PoW scheme that
 // accepts all blocks as valid, but delays verifications by some time, though
-// they still have to conform to the Ethereum consensus rules.
+// they still have to conform to the Wtc consensus rules.
 func NewFakeDelayer(delay time.Duration) *Ethash {
 	return &Ethash{fakeMode: true, fakeDelay: delay}
 }
@@ -584,6 +590,10 @@ func (ethash *Ethash) SetThreads(threads int) {
 // per second over the last minute.
 func (ethash *Ethash) Hashrate() float64 {
 	return ethash.hashrate.Rate1()
+}
+
+func (ethash *Ethash) IsGPU() (bool, int64, int64) {
+	return ethash.GPUMode, ethash.GPUPort, ethash.GPUGetPort
 }
 
 // APIs implements consensus.Engine, returning the user facing RPC APIs. Currently

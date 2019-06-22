@@ -1,12 +1,12 @@
 // Copyright 2017 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The go-wtc library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The go-wtc library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -18,19 +18,23 @@ package ethash
 
 import (
 	"encoding/binary"
+	// "fmt"
 	"hash"
+	"math/big"
 	"reflect"
 	"runtime"
 	"sync"
 	"sync/atomic"
 	"time"
 	"unsafe"
+	"crypto/sha256"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/bitutil"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/crypto/sha3"
-	"github.com/ethereum/go-ethereum/log"
+	"github.com/wtc/go-wtc/common"
+	"github.com/wtc/go-wtc/common/bitutil"
+	"github.com/wtc/go-wtc/crypto"
+	"github.com/wtc/go-wtc/crypto/sha3"
+	"github.com/wtc/go-wtc/crypto/x11"
+	"github.com/wtc/go-wtc/log"
 )
 
 const (
@@ -46,6 +50,11 @@ const (
 	cacheRounds        = 3       // Number of rounds in cache production
 	loopAccesses       = 64      // Number of accesses in hashimoto loop
 )
+
+var N11 *big.Int = big.NewInt(11)
+var meta []byte = []byte("ABCDEFGHIJK")
+var metaDiscard []byte = []byte("CFIJK")
+var metaReplace []byte = []byte("AHDGEB")
 
 // hasher is a repetitive hasher allowing the same hash data structures to be
 // reused between hash runs instead of requiring new ones to be created.
@@ -282,6 +291,70 @@ func generateDataset(dest []uint32, epoch uint64, cache []uint32) {
 	}
 	// Wait for all the generators to finish and return
 	pend.Wait()
+}
+
+
+func mysha256(set []byte,nonce uint64) ([]byte,[]byte) { 
+	digest := make([]byte, common.HashLength)
+	hash := sha256.New()
+
+	var res = make([]byte, 8)
+    binary.BigEndian.PutUint64(res, nonce)
+
+
+	for _,v := range res {
+    	set=append(set,v)
+    }
+
+	hash.Write(set)
+	md := hash.Sum(nil)
+	//mdStr := hex.EncodeToString(md)
+	return digest,md
+}
+
+func myx11(set []byte, nonce uint64, order []byte) ([]byte, []byte) {
+	digest := make([]byte, common.HashLength)
+	hash,out := x11.New(),[32]byte{}
+
+	var res = make([]byte, 8)
+    binary.BigEndian.PutUint64(res, nonce)
+
+
+	for _,v := range res {
+    	set=append(set,v)
+    }
+	for i := 0; i < 24; i++ {
+		set = append(set, 0)
+	}
+	hash.Hash(set, out[:], order)
+	return digest,out[:]
+}
+
+func getX11Order(hash []byte, length int) []byte {
+	x11Array := make([]byte, length)
+	for i := 0; i < length ; i++ {
+		// index := int(hash[i]) % (length - i)
+		index := int(hash[i]) % (length)
+		x11Array[i] = meta[index]
+	}
+	// fmt.Printf("x11Array0: %s \n", x11Array[:])
+	
+	for i := 0; i < len(metaDiscard) ; i++ {
+		var k = 0
+		for j := 0; j < length ; j++ {
+			if x11Array[j] == metaDiscard[i] {
+				if k == 0 {
+					k = 1
+				}else {
+					metaReplaceIndex := int(hash[11]) % len(metaReplace)
+					x11Array[j] = metaReplace[metaReplaceIndex]
+				}
+			}
+		}
+	}
+
+	// fmt.Printf("x11Array1: %s", x11Array[:])
+	return x11Array
 }
 
 // hashimoto aggregates data from the full dataset in order to produce our final

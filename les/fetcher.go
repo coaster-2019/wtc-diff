@@ -1,12 +1,12 @@
 // Copyright 2016 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The go-wtc library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The go-wtc library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-// Package les implements the Light Ethereum Subprotocol.
+// Package les implements the Light Wtc Subprotocol.
 package les
 
 import (
@@ -22,13 +22,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/mclock"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/light"
-	"github.com/ethereum/go-ethereum/log"
+	"github.com/wtc/go-wtc/common"
+	"github.com/wtc/go-wtc/common/mclock"
+	// "github.com/wtc/go-wtc/consensus"
+	"github.com/wtc/go-wtc/core"
+	"github.com/wtc/go-wtc/core/types"
+	"github.com/wtc/go-wtc/light"
+	// "github.com/wtc/go-wtc/log"
 )
 
 const (
@@ -491,31 +491,35 @@ func (f *lightFetcher) deliverHeaders(peer *peer, reqID uint64, headers []*types
 
 // processResponse processes header download request responses, returns true if successful
 func (f *lightFetcher) processResponse(req fetchRequest, resp fetchResponse) bool {
-	if uint64(len(resp.headers)) != req.amount || resp.headers[0].Hash() != req.hash {
-		req.peer.Log().Debug("Response content mismatch", "requested", len(resp.headers), "reqfrom", resp.headers[0], "delivered", req.amount, "delfrom", req.hash)
-		return false
-	}
-	headers := make([]*types.Header, req.amount)
-	for i, header := range resp.headers {
-		headers[int(req.amount)-1-i] = header
-	}
-	if _, err := f.chain.InsertHeaderChain(headers, 1); err != nil {
-		if err == consensus.ErrFutureBlock {
-			return true
-		}
-		log.Debug("Failed to insert header chain", "err", err)
-		return false
-	}
-	tds := make([]*big.Int, len(headers))
-	for i, header := range headers {
-		td := f.chain.GetTd(header.Hash(), header.Number.Uint64())
-		if td == nil {
-			log.Debug("Total difficulty not found for header", "index", i+1, "number", header.Number, "hash", header.Hash())
-			return false
-		}
-		tds[i] = td
-	}
-	f.newHeaders(headers, tds)
+	// if uint64(len(resp.headers)) != req.amount || resp.headers[0].Hash() != req.hash {
+	// 	req.peer.Log().Debug("Response content mismatch", "requested", len(resp.headers), "reqfrom", resp.headers[0], "delivered", req.amount, "delfrom", req.hash)
+	// 	return false
+	// }
+	// headers := make([]*types.Header, req.amount)
+	// // for i, header := range resp.headers {
+	// // 	headers[int(req.amount)-1-i] = header
+	// // }
+	// blocks := make([]*types.Block, req.amount)
+	// for i, header := range resp.headers {
+	// 	blocks[int(req.amount)-1-i] = f.chain.GetBlockByHash(header.Hash(),header.Hash())
+	// }
+	// if _, err := f.chain.InsertHeaderChain(blocks); err != nil {
+	// 	if err == consensus.ErrFutureBlock {
+	// 		return true
+	// 	}
+	// 	log.Debug("Failed to insert header chain", "err", err)
+	// 	return false
+	// }
+	// tds := make([]*big.Int, len(headers))
+	// for i, header := range headers {
+	// 	td := f.chain.GetTd(header.Hash(), header.Number.Uint64())
+	// 	if td == nil {
+	// 		log.Debug("Total difficulty not found for header", "index", i+1, "number", header.Number, "hash", header.Hash())
+	// 		return false
+	// 	}
+	// 	tds[i] = td
+	// }
+	// f.newHeaders(headers, tds)
 	return true
 }
 
